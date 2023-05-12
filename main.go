@@ -3,26 +3,31 @@ package main
 import (
 	"log"
 
-	"github.com/accalina/restaurant-mgmt/src"
-	"github.com/accalina/restaurant-mgmt/src/models"
+	"github.com/accalina/restaurant-mgmt/configuration"
+	"github.com/accalina/restaurant-mgmt/controller"
+	"github.com/accalina/restaurant-mgmt/model"
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/cors"
+	"github.com/gofiber/fiber/v2/middleware/recover"
 )
 
 func main() {
 
-	// Connect to DB
-	if err := models.ConnDB(); err != nil {
-		log.Fatal("cannot connect to DB")
-	}
+	// Setup config
+	config := configuration.New()
+	configuration.NewDatabase(config)
 
 	// Migrate the DB
-	if err := models.DB.AutoMigrate(&models.FoodItem{}); err != nil {
+	if err := configuration.DB.AutoMigrate(&model.FoodItem{}); err != nil {
 		log.Fatal("cannot migrate DB")
 	}
 
-	app := fiber.New()
+	// Setup Fiber
+	app := fiber.New(configuration.NewFiberConfiguration())
+	app.Use(recover.New())
+	app.Use(cors.New())
 
-	src.Routes(app)
+	controller.Routes(app)
 
 	log.Fatal(
 		app.Listen(":8001"),

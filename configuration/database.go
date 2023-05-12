@@ -1,34 +1,25 @@
-package models
+package configuration
 
 import (
 	"fmt"
-	"os"
 
-	"github.com/joho/godotenv"
+	"github.com/accalina/restaurant-mgmt/exception"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
 
 var DB *gorm.DB
 
-func ConnDB() error {
-	// Load the .env vars
-	if err := godotenv.Load(); err != nil {
-		return err
-	}
-
+func NewDatabase(config Config) {
 	// Construct the DSN string
 	dsn := fmt.Sprintf(
 		"host=%s port=%s user=%s password=%s dbname=%s sslmode=disable TimeZone=Asia/Jakarta",
-		os.Getenv("DB_HOST"), os.Getenv("DB_PORT"), os.Getenv("DB_USER"), os.Getenv("DB_PASS"), os.Getenv("DB_NAME"),
+		config.Get("DB_HOST"), config.Get("DB_PORT"), config.Get("DB_USER"), config.Get("DB_PASS"), config.Get("DB_NAME"),
 	)
 
 	// Open new connection to PostgreSQL
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
-	if err != nil {
-		return err
-	}
+	exception.PanicLogging(err)
 
 	DB = db
-	return nil
 }

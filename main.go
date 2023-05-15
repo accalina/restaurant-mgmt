@@ -5,29 +5,39 @@ import (
 
 	"github.com/accalina/restaurant-mgmt/configuration"
 	"github.com/accalina/restaurant-mgmt/controller"
-	"github.com/accalina/restaurant-mgmt/model"
+	repository "github.com/accalina/restaurant-mgmt/repository/impl"
+	service "github.com/accalina/restaurant-mgmt/service/impl"
 	"github.com/gofiber/fiber/v2"
-	"github.com/gofiber/fiber/v2/middleware/cors"
-	"github.com/gofiber/fiber/v2/middleware/recover"
 )
 
 func main() {
 
 	// Setup config
 	config := configuration.New()
-	configuration.NewDatabase(config)
+	database := configuration.NewDatabase(config)
+
+	//  Repository
+	foodRepository := repository.NewFoodRepositoryImpl(database)
+
+
+	// Service
+	foodService := service.NewFoodServiceImpl(&foodRepository)
+
+	// Controller
+	foodController := controller.NewFoodController(&foodService, config)
 
 	// Migrate the DB
-	if err := configuration.DB.AutoMigrate(&model.FoodItem{}); err != nil {
-		log.Fatal("cannot migrate DB")
-	}
+	// if err := configuration.DB.AutoMigrate(&model.FoodItem{}); err != nil {
+	// 	log.Fatal("cannot migrate DB")
+	// }
 
 	// Setup Fiber
 	app := fiber.New(configuration.NewFiberConfiguration())
-	app.Use(recover.New())
-	app.Use(cors.New())
+	// app.Use(recover.New())
+	// app.Use(cors.New())
 
-	controller.Routes(app)
+	// Routing
+	foodController.Route(app)
 
 	log.Fatal(
 		app.Listen(":8001"),

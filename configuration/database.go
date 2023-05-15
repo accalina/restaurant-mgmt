@@ -10,7 +10,7 @@ import (
 
 var DB *gorm.DB
 
-func NewDatabase(config Config) {
+func NewDatabase(config Config) *gorm.DB {
 	// Construct the DSN string
 	dsn := fmt.Sprintf(
 		"host=%s port=%s user=%s password=%s dbname=%s sslmode=disable TimeZone=Asia/Jakarta",
@@ -21,5 +21,5 @@ func NewDatabase(config Config) {
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	exception.PanicLogging(err)
 
-	DB = db
+	return db
 }

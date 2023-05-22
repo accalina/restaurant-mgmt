@@ -10,12 +10,12 @@ import (
 )
 
 type FoodController struct {
-	service.FoodServie
+	service.FoodService
 	configuration.Config
 }
 
-func NewFoodController(foodService *service.FoodServie, config configuration.Config) *FoodController {
-	return &FoodController{FoodServie: *foodService, Config: config}
+func NewFoodController(foodService *service.FoodService, config configuration.Config) *FoodController {
+	return &FoodController{FoodService: *foodService, Config: config}
 }
 
 func (controller FoodController) Route(app *fiber.App) {
@@ -27,8 +27,17 @@ func (controller FoodController) Create(c *fiber.Ctx) error {
 	var request model.FoodCreteOrUpdateModel
 	err := c.BodyParser(&request)
 	exception.PanicLogging(err)
+	err = request.Validate()
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(model.GeneralResponse{
+			Code:    400,
+			Message: "Invalid request",
+			Data:    err,
+			Errors:  model.Extract(err),
+		})
+	}
 
-	response := controller.FoodServie.Create(c.Context(), request)
+	response := controller.FoodService.Create(c.Context(), request)
 	return c.Status(fiber.StatusCreated).JSON(model.GeneralResponse{
 		Code:    200,
 		Message: "Success",

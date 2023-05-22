@@ -9,7 +9,7 @@ import (
 	"github.com/accalina/restaurant-mgmt/service"
 )
 
-func NewFoodServiceImpl(foodRepository *repository.FoodRepository) service.FoodServie {
+func NewFoodServiceImpl(foodRepository *repository.FoodRepository) service.FoodService {
 	return &foodServiceImpl{FoodRepository: *foodRepository}
 }
 
@@ -19,7 +19,8 @@ type foodServiceImpl struct {
 
 func (service *foodServiceImpl) Create(ctx context.Context, foodModel model.FoodCreteOrUpdateModel) entity.Food {
 	food := entity.Food{
-		Field: foodModel.Field,
+		Name:  foodModel.Name,
+		Price: foodModel.Price,
 	}
 	return service.FoodRepository.Insert(ctx, food)
 }

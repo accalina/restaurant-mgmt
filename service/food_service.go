@@ -7,6 +7,6 @@ import (
 	"github.com/accalina/restaurant-mgmt/model"
 )
 
-type FoodServie interface {
+type FoodService interface {
 	Create(ctx context.Context, model model.FoodCreteOrUpdateModel) entity.Food
 }

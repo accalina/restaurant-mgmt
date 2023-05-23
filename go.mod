@@ -3,6 +3,7 @@ module github.com/accalina/restaurant-mgmt
 go 1.19
 
 require (
+	github.com/go-playground/validator/v10 v10.13.0
 	github.com/gofiber/fiber/v2 v2.45.0
 	github.com/joho/godotenv v1.5.1
 	gorm.io/driver/postgres v1.5.0
@@ -12,7 +13,6 @@ require (
 require (
 	github.com/go-playground/locales v0.14.1 // indirect
 	github.com/go-playground/universal-translator v0.18.1 // indirect
-	github.com/go-playground/validator/v10 v10.13.0 // indirect
 	github.com/leodido/go-urn v1.2.3 // indirect
 	github.com/stretchr/testify v1.8.2 // indirect
 )

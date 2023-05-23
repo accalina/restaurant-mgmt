@@ -3,6 +3,7 @@ package configuration
 import (
 	"fmt"
 
+	"github.com/accalina/restaurant-mgmt/entity"
 	"github.com/accalina/restaurant-mgmt/exception"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -19,6 +20,10 @@ func NewDatabase(config Config) *gorm.DB {
 
 	// Open new connection to PostgreSQL
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+	exception.PanicLogging(err)
+
+	// Run Migration
+	err = db.AutoMigrate(&entity.Food{})
 	exception.PanicLogging(err)
 
 	return db

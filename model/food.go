@@ -3,20 +3,25 @@ package model
 import (
 	"encoding/json"
 	"io"
+	"time"
 
 	"github.com/go-playground/validator/v10"
+	"github.com/google/uuid"
 )
 
-// type Food struct {
-// 	Id        uuid.UUID `gorm:"primaryKey;column:id;type:varchar(36) json:"id"`
-// 	Field     string    `gorm:"column:field;type:varchar(255)" json:"field"`
-// 	CreatedAt time.Time `gorm:"column:created_at" json:"created_at"`
-// 	UpdatedAt time.Time `gorm:"column:updated_at" json:"updated_at"`
-// }
+type FoodModel struct {
+	Id        uuid.UUID `json:"id"`
+	Name      string    `json:"name"`
+	Price     int64     `json:"price"`
+	Qty       int32     `json:"qty"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
+}
 
 type FoodCreteOrUpdateModel struct {
-	Name  string  `json:"name" validate:"required,min=2"`
-	Price float64 `json:"price" validate:"required,min=0"`
+	Name  string `json:"name" validate:"required,min=1"`
+	Price int64  `json:"price" validate:"required,min=1"`
+	Qty   int32  `json:"qty" validate:"required"`
 }
 
 func (f *FoodCreteOrUpdateModel) FromJSON(r io.Reader) error {
@@ -27,5 +32,4 @@ func (f *FoodCreteOrUpdateModel) FromJSON(r io.Reader) error {
 func (f *FoodCreteOrUpdateModel) Validate() error {
 	validate := validator.New()
 	return validate.Struct(f)
-
 }

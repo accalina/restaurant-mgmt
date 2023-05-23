@@ -19,12 +19,12 @@ func main() {
 	//  Repository
 	foodRepository := repository.NewFoodRepositoryImpl(database)
 
-
 	// Service
 	foodService := service.NewFoodServiceImpl(&foodRepository)
 
 	// Controller
 	foodController := controller.NewFoodController(&foodService, config)
+	homeController := controller.NewHomeController()
 
 	// Migrate the DB
 	// if err := configuration.DB.AutoMigrate(&model.FoodItem{}); err != nil {
@@ -38,8 +38,9 @@ func main() {
 
 	// Routing
 	foodController.Route(app)
+	homeController.Route(app)
 
 	log.Fatal(
-		app.Listen(":8001"),
+		app.Listen(config.Get("SERVER_PORT")),
 	)
 }

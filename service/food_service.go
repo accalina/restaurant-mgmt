@@ -10,4 +10,5 @@ type FoodService interface {
 	FindAll(ctx context.Context) []model.FoodModel
 	FindById(ctx context.Context, id string) (model.FoodModel, error)
 	Create(ctx context.Context, model model.FoodCreteOrUpdateModel) model.FoodCreteOrUpdateModel
+	Delete(ctx context.Context, id string) bool
 }

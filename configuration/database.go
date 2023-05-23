@@ -11,7 +11,7 @@ import (
 
 var DB *gorm.DB
 
-func NewDatabase(config Config) *gorm.DB {
+func NewDatabase(config Config, isRunMigration bool) *gorm.DB {
 	// Construct the DSN string
 	dsn := fmt.Sprintf(
 		"host=%s port=%s user=%s password=%s dbname=%s sslmode=disable TimeZone=Asia/Jakarta",
@@ -23,8 +23,10 @@ func NewDatabase(config Config) *gorm.DB {
 	exception.PanicLogging(err)
 
 	// Run Migration
-	err = db.AutoMigrate(&entity.Food{})
-	exception.PanicLogging(err)
+	if isRunMigration {
+		err = db.AutoMigrate(&entity.Food{})
+		exception.PanicLogging(err)
+	}
 
 	return db
 }

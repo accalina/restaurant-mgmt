@@ -24,6 +24,34 @@ func (foodController FoodController) Route(app *fiber.App) {
 	food.Get("/", foodController.FindAll)
 	food.Get("/:id", foodController.FindById)
 	food.Post("/", foodController.Create)
+	food.Delete("/:id", foodController.Delete)
+}
+
+func (foodController FoodController) FindAll(c *fiber.Ctx) error {
+	response := foodController.FoodService.FindAll(c.Context())
+	return c.Status(fiber.StatusCreated).JSON(model.GeneralResponse{
+		Code:    201,
+		Message: "Success",
+		Data:    response,
+	})
+}
+
+func (foodController FoodController) FindById(c *fiber.Ctx) error {
+	id := c.Params("id")
+	response, err := foodController.FoodService.FindById(c.Context(), id)
+	if err != nil {
+		emptyArr := common.DataArrayValue{ArrMessage: []string{}}
+		return c.Status(fiber.StatusCreated).JSON(model.GeneralResponse{
+			Code:    200,
+			Message: "Error",
+			Data:    emptyArr.ArrMessage,
+		})
+	}
+	return c.Status(fiber.StatusCreated).JSON(model.GeneralResponse{
+		Code:    200,
+		Message: "Success",
+		Data:    response,
+	})
 }
 
 func (foodController FoodController) Create(c *fiber.Ctx) error {
@@ -48,29 +76,22 @@ func (foodController FoodController) Create(c *fiber.Ctx) error {
 	})
 }
 
-func (foodController FoodController) FindAll(c *fiber.Ctx) error {
-	response := foodController.FoodService.FindAll(c.Context())
-	return c.Status(fiber.StatusCreated).JSON(model.GeneralResponse{
-		Code:    201,
-		Message: "Success",
-		Data:    response,
-	})
-}
-
-func (foodController FoodController) FindById(c *fiber.Ctx) error {
+func (foodController FoodController) Delete(c *fiber.Ctx) error {
 	id := c.Params("id")
-	response, error := foodController.FoodService.FindById(c.Context(), id)
-	if error != nil {
+
+	deleteErr := foodController.FoodService.Delete(c.Context(), id)
+	if deleteErr {
 		emptyArr := common.DataArrayValue{ArrMessage: []string{}}
 		return c.Status(fiber.StatusCreated).JSON(model.GeneralResponse{
 			Code:    200,
-			Message: "Success",
+			Message: "Error",
 			Data:    emptyArr.ArrMessage,
 		})
 	}
+	message := common.DataMessageValue{Message: "Food ID: " + id + " has been deleted!"}
 	return c.Status(fiber.StatusCreated).JSON(model.GeneralResponse{
 		Code:    200,
 		Message: "Success",
-		Data:    response,
+		Data:    message.Message,
 	})
 }

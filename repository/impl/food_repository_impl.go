@@ -28,15 +28,23 @@ func (repository *foodRepositoryImpl) Insert(ctx context.Context, food entity.Fo
 
 func (repository *foodRepositoryImpl) FindAll(ctx context.Context) []entity.Food {
 	var foods []entity.Food
-	repository.DB.WithContext(ctx).Find(&foods)
+	repository.DB.WithContext(ctx).Unscoped().Where("deleted_at is null").Find(&foods)
 	return foods
 }
 
 func (repository *foodRepositoryImpl) FindById(ctx context.Context, id string) (entity.Food, error) {
 	var food entity.Food
-	result := repository.DB.WithContext(ctx).Unscoped().Where("id = ?", id).First(&food)
+	result := repository.DB.WithContext(ctx).Unscoped().Where("deleted_at is null").Where("id = ?", id).First(&food)
 	if result.RowsAffected == 0 {
 		return entity.Food{}, errors.New("food not found")
 	}
 	return food, nil
+}
+
+func (repository *foodRepositoryImpl) Delete(ctx context.Context, food entity.Food, id string) error {
+	result := repository.DB.WithContext(ctx).Unscoped().Where("deleted_at is null").Where("id = ?", id).Updates(&food)
+	if result.RowsAffected == 0 {
+		return errors.New("food not found")
+	}
+	return nil
 }

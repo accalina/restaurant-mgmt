@@ -14,7 +14,6 @@ require (
 	github.com/go-playground/locales v0.14.1 // indirect
 	github.com/go-playground/universal-translator v0.18.1 // indirect
 	github.com/leodido/go-urn v1.2.3 // indirect
-	github.com/stretchr/testify v1.8.2 // indirect
 )
 
 require (

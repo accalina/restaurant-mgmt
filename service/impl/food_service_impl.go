@@ -3,6 +3,7 @@ package impl
 import (
 	"context"
 	"errors"
+	"time"
 
 	"github.com/accalina/restaurant-mgmt/entity"
 	"github.com/accalina/restaurant-mgmt/model"
@@ -31,13 +32,16 @@ func (service *foodServiceImpl) Create(ctx context.Context, foodModel model.Food
 func (service *foodServiceImpl) FindAll(ctx context.Context) (response []model.FoodModel) {
 	foods := service.FoodRepository.FindAll(ctx)
 	for _, food := range foods {
+
+		updatedAt := time.Time{}
+		updatedAt = *food.UpdatedAt
 		response = append(response, model.FoodModel{
 			Id:        food.Id,
 			Name:      food.Name,
 			Price:     food.Price,
 			Qty:       food.Qty,
 			CreatedAt: food.CreatedAt,
-			UpdatedAt: food.UpdatedAt,
+			UpdatedAt: updatedAt,
 		})
 	}
 	if len(foods) == 0 {
@@ -51,13 +55,26 @@ func (service *foodServiceImpl) FindById(ctx context.Context, id string) (model.
 	if err != nil {
 		return model.FoodModel{}, errors.New("food not found")
 	}
-
+	updatedAt := time.Time{}
+	updatedAt = *food.UpdatedAt
 	return model.FoodModel{
 		Id:        food.Id,
 		Name:      food.Name,
 		Price:     food.Price,
 		Qty:       food.Qty,
 		CreatedAt: food.CreatedAt,
-		UpdatedAt: food.UpdatedAt,
+		UpdatedAt: updatedAt,
 	}, nil
+}
+
+func (service *foodServiceImpl) Delete(ctx context.Context, id string) bool {
+	currentTime := time.Now()
+	food := entity.Food{
+		DeletedAt: &currentTime,
+	}
+	err := service.FoodRepository.Delete(ctx, food, id)
+	if err != nil {
+		return true
+	}
+	return false
 }

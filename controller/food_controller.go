@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"github.com/accalina/restaurant-mgmt/common"
 	"github.com/accalina/restaurant-mgmt/configuration"
 	"github.com/accalina/restaurant-mgmt/exception"
 	"github.com/accalina/restaurant-mgmt/middleware"
@@ -18,12 +19,14 @@ func NewFoodController(foodService *service.FoodService, config configuration.Co
 	return &FoodController{FoodService: *foodService, Config: config}
 }
 
-func (controller FoodController) Route(app *fiber.App) {
+func (foodController FoodController) Route(app *fiber.App) {
 	food := app.Group("/food", middleware.LoggerMiddleware)
-	food.Post("/", controller.Create)
+	food.Get("/", foodController.FindAll)
+	food.Get("/:id", foodController.FindById)
+	food.Post("/", foodController.Create)
 }
 
-func (controller FoodController) Create(c *fiber.Ctx) error {
+func (foodController FoodController) Create(c *fiber.Ctx) error {
 	var request model.FoodCreteOrUpdateModel
 	err := c.BodyParser(&request)
 	exception.PanicLogging(err)
@@ -37,7 +40,34 @@ func (controller FoodController) Create(c *fiber.Ctx) error {
 		})
 	}
 
-	response := controller.FoodService.Create(c.Context(), request)
+	response := foodController.FoodService.Create(c.Context(), request)
+	return c.Status(fiber.StatusCreated).JSON(model.GeneralResponse{
+		Code:    201,
+		Message: "Success",
+		Data:    response,
+	})
+}
+
+func (foodController FoodController) FindAll(c *fiber.Ctx) error {
+	response := foodController.FoodService.FindAll(c.Context())
+	return c.Status(fiber.StatusCreated).JSON(model.GeneralResponse{
+		Code:    201,
+		Message: "Success",
+		Data:    response,
+	})
+}
+
+func (foodController FoodController) FindById(c *fiber.Ctx) error {
+	id := c.Params("id")
+	response, error := foodController.FoodService.FindById(c.Context(), id)
+	if error != nil {
+		emptyArr := common.DataArrayValue{ArrMessage: []string{}}
+		return c.Status(fiber.StatusCreated).JSON(model.GeneralResponse{
+			Code:    200,
+			Message: "Success",
+			Data:    emptyArr.ArrMessage,
+		})
+	}
 	return c.Status(fiber.StatusCreated).JSON(model.GeneralResponse{
 		Code:    200,
 		Message: "Success",

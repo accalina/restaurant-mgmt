@@ -29,8 +29,8 @@ func (foodController FoodController) Route(app *fiber.App) {
 
 func (foodController FoodController) FindAll(c *fiber.Ctx) error {
 	response := foodController.FoodService.FindAll(c.Context())
-	return c.Status(fiber.StatusCreated).JSON(model.GeneralResponse{
-		Code:    201,
+	return c.Status(fiber.StatusOK).JSON(model.GeneralResponse{
+		Code:    200,
 		Message: "Success",
 		Data:    response,
 	})
@@ -76,6 +76,32 @@ func (foodController FoodController) Create(c *fiber.Ctx) error {
 	})
 }
 
+func (foodController FoodController) Update(c *fiber.Ctx) error {
+	id := c.Params("id")
+
+	var request model.FoodCreteOrUpdateModel
+	err := c.BodyParser(&request)
+	exception.PanicLogging(err)
+	err = request.Validate()
+	exception.PanicLogging(err)
+
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(model.GeneralResponse{
+			Code:    400,
+			Message: "Invalid request",
+			Data:    err,
+			Errors:  model.Extract(err),
+		})
+	}
+
+	response := foodController.FoodService.Update(c.Context(), request, id)
+	return c.Status(fiber.StatusCreated).JSON(model.GeneralResponse{
+		Code:    200,
+		Message: "Success",
+		Data:    response,
+	})
+}
+
 func (foodController FoodController) Delete(c *fiber.Ctx) error {
 	id := c.Params("id")
 
@@ -89,7 +115,7 @@ func (foodController FoodController) Delete(c *fiber.Ctx) error {
 		})
 	}
 	message := common.DataMessageValue{Message: "Food ID: " + id + " has been deleted!"}
-	return c.Status(fiber.StatusCreated).JSON(model.GeneralResponse{
+	return c.Status(fiber.StatusOK).JSON(model.GeneralResponse{
 		Code:    200,
 		Message: "Success",
 		Data:    message.Message,

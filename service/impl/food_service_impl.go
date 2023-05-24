@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/accalina/restaurant-mgmt/entity"
+	"github.com/accalina/restaurant-mgmt/exception"
 	"github.com/accalina/restaurant-mgmt/model"
 	"github.com/accalina/restaurant-mgmt/repository"
 	"github.com/accalina/restaurant-mgmt/service"
@@ -67,14 +68,25 @@ func (service *foodServiceImpl) FindById(ctx context.Context, id string) (model.
 	}, nil
 }
 
+func (service *foodServiceImpl) Update(ctx context.Context, foodModel model.FoodCreteOrUpdateModel, id string) model.FoodCreteOrUpdateModel {
+	currentTime := time.Now()
+	food := entity.Food{
+		Name:      foodModel.Name,
+		Price:     foodModel.Price,
+		Qty:       foodModel.Qty,
+		UpdatedAt: &currentTime,
+	}
+	_, err := service.FoodRepository.Update(ctx, food, id)
+	exception.PanicLogging(err)
+	return foodModel
+}
+
 func (service *foodServiceImpl) Delete(ctx context.Context, id string) bool {
 	currentTime := time.Now()
 	food := entity.Food{
 		DeletedAt: &currentTime,
 	}
-	err := service.FoodRepository.Delete(ctx, food, id)
-	if err != nil {
-		return true
-	}
-	return false
+	_, err := service.FoodRepository.Update(ctx, food, id)
+	exception.PanicLogging(err)
+	return err != nil
 }

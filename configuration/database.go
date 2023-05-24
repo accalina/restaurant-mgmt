@@ -24,8 +24,8 @@ func NewDatabase(config Config, isRunMigration bool) *gorm.DB {
 
 	// Run Migration
 	if isRunMigration {
-		err = db.AutoMigrate(&entity.Food{})
-		exception.PanicLogging(err)
+		exception.PanicLogging(db.AutoMigrate(&entity.Food{}))
+		exception.PanicLogging(db.AutoMigrate(&entity.User{}))
 	}
 
 	return db

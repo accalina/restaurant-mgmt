@@ -41,10 +41,10 @@ func (repository *foodRepositoryImpl) FindById(ctx context.Context, id string) (
 	return food, nil
 }
 
-func (repository *foodRepositoryImpl) Delete(ctx context.Context, food entity.Food, id string) error {
+func (repository *foodRepositoryImpl) Update(ctx context.Context, food entity.Food, id string) (entity.Food, error) {
 	result := repository.DB.WithContext(ctx).Unscoped().Where("deleted_at is null").Where("id = ?", id).Updates(&food)
 	if result.RowsAffected == 0 {
-		return errors.New("food not found")
+		return entity.Food{}, errors.New("food not found")
 	}
-	return nil
+	return food, nil
 }

@@ -21,13 +21,16 @@ func main() {
 
 	//  Repository
 	foodRepository := repository.NewFoodRepositoryImpl(database)
+	userRepository := repository.NewUserRepositoryImpl(database)
 
 	// Service
 	foodService := service.NewFoodServiceImpl(&foodRepository)
+	userService := service.NewUserServiceImpl(&userRepository)
 
 	// Controller
-	foodController := controller.NewFoodController(&foodService, config)
 	homeController := controller.NewHomeController()
+	foodController := controller.NewFoodController(&foodService, config)
+	userController := controller.NewUserController(&userService, config)
 
 	// Setup Fiber
 	app := fiber.New(configuration.NewFiberConfiguration())
@@ -37,6 +40,7 @@ func main() {
 	// Routing
 	foodController.Route(app)
 	homeController.Route(app)
+	userController.Route(app)
 
 	log.Fatal(
 		app.Listen(config.Get("SERVER_PORT")),

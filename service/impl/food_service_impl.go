@@ -30,22 +30,21 @@ func (service *foodServiceImpl) Create(ctx context.Context, foodModel model.Food
 	return foodModel
 }
 
-func (service *foodServiceImpl) FindAll(ctx context.Context, filter *model.FoodFilter) (response []model.FoodModel, err error) {
+func (service *foodServiceImpl) FindAll(ctx context.Context, filter *model.FoodFilter) (result []model.FoodModel, meta model.Meta, err error) {
 	foods, err := service.FoodRepository.FindAll(ctx, filter)
 	if err != nil {
-		return response, err
+		return result, meta, err
 	}
+	count := service.FoodRepository.Count(ctx, filter)
+	meta = model.NewMeta(filter.Page, filter.Limit, count)
 	for _, food := range foods {
-
-		updatedAt := time.Time{}
-		updatedAt = *food.UpdatedAt
-		response = append(response, model.FoodModel{
+		result = append(result, model.FoodModel{
 			Id:        food.Id,
 			Name:      food.Name,
 			Price:     food.Price,
 			Qty:       food.Qty,
 			CreatedAt: food.CreatedAt,
-			UpdatedAt: updatedAt,
+			UpdatedAt: food.UpdatedAt,
 		})
 	}
 	return
@@ -56,15 +55,14 @@ func (service *foodServiceImpl) FindById(ctx context.Context, id string) (model.
 	if err != nil {
 		return model.FoodModel{}, errors.New("food not found")
 	}
-	updatedAt := time.Time{}
-	updatedAt = *food.UpdatedAt
+
 	return model.FoodModel{
 		Id:        food.Id,
 		Name:      food.Name,
 		Price:     food.Price,
 		Qty:       food.Qty,
 		CreatedAt: food.CreatedAt,
-		UpdatedAt: updatedAt,
+		UpdatedAt: food.UpdatedAt,
 	}, nil
 }
 

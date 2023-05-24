@@ -30,11 +30,17 @@ func (repository *foodRepositoryImpl) Insert(ctx context.Context, food entity.Fo
 }
 
 func (repository *foodRepositoryImpl) FindAll(ctx context.Context, filter *model.FoodFilter) (foods []entity.Food, err error) {
-	filter.SetDefaultOrderBy()
 	err = repository.setFilter(repository.DB, filter).Order(clause.OrderByColumn{
 		Column: clause.Column{Name: filter.OrderBy},
 		Desc:   strings.ToUpper(filter.Sort) == "DESC",
 	}).Limit(filter.Limit).Offset(filter.CalculateOffset()).Find(&foods).Error
+	return
+}
+
+func (repository *foodRepositoryImpl) Count(ctx context.Context, filter *model.FoodFilter) (count int) {
+	var total int64
+	repository.setFilter(repository.DB, filter).Model(&entity.Food{}).Count(&total)
+	count = int(total)
 	return
 }
 
@@ -56,7 +62,7 @@ func (repository *foodRepositoryImpl) Update(ctx context.Context, food entity.Fo
 }
 
 func (repository *foodRepositoryImpl) setFilter(db *gorm.DB, filter *model.FoodFilter) *gorm.DB {
-	if filter.ID != nil {
+	if *filter.ID != "" {
 		db = db.Where("id = ?", *filter.ID)
 	}
 	if filter.Search != "" {

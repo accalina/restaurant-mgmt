@@ -30,7 +30,7 @@ func (foodController FoodController) Route(app *fiber.App) {
 }
 
 func (foodController FoodController) FindAll(c *fiber.Ctx) error {
-	queryParams := new(model.FoodFilter)
+	queryParams := model.NewFoodFilter()
 	if err := c.QueryParser(queryParams); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(model.GeneralResponse{
 			Code:    fiber.StatusBadRequest,
@@ -39,7 +39,7 @@ func (foodController FoodController) FindAll(c *fiber.Ctx) error {
 		})
 	}
 
-	response, err := foodController.FoodService.FindAll(c.Context(), queryParams)
+	response, meta, err := foodController.FoodService.FindAll(c.Context(), queryParams)
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(model.GeneralResponse{
 			Code:    fiber.StatusBadRequest,
@@ -51,6 +51,7 @@ func (foodController FoodController) FindAll(c *fiber.Ctx) error {
 		Code:    201,
 		Message: "Success",
 		Data:    response,
+		Meta:    meta,
 	})
 }
 

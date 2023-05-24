@@ -30,8 +30,11 @@ func (service *foodServiceImpl) Create(ctx context.Context, foodModel model.Food
 	return foodModel
 }
 
-func (service *foodServiceImpl) FindAll(ctx context.Context) (response []model.FoodModel) {
-	foods := service.FoodRepository.FindAll(ctx)
+func (service *foodServiceImpl) FindAll(ctx context.Context, filter *model.FoodFilter) (response []model.FoodModel, err error) {
+	foods, err := service.FoodRepository.FindAll(ctx, filter)
+	if err != nil {
+		return response, err
+	}
 	for _, food := range foods {
 
 		updatedAt := time.Time{}
@@ -45,10 +48,7 @@ func (service *foodServiceImpl) FindAll(ctx context.Context) (response []model.F
 			UpdatedAt: updatedAt,
 		})
 	}
-	if len(foods) == 0 {
-		return []model.FoodModel{}
-	}
-	return response
+	return
 }
 
 func (service *foodServiceImpl) FindById(ctx context.Context, id string) (model.FoodModel, error) {

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 
 	"github.com/accalina/restaurant-mgmt/configuration"
@@ -43,6 +44,6 @@ func main() {
 	userController.Route(app)
 
 	log.Fatal(
-		app.Listen(config.Get("SERVER_PORT")),
+		app.Listen(fmt.Sprintf(":%s", config.Get("SERVER_PORT"))),
 	)
 }

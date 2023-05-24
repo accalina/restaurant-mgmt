@@ -1,6 +1,8 @@
 package controller
 
 import (
+	"fmt"
+
 	"github.com/accalina/restaurant-mgmt/common"
 	"github.com/accalina/restaurant-mgmt/configuration"
 	"github.com/accalina/restaurant-mgmt/exception"
@@ -28,9 +30,25 @@ func (foodController FoodController) Route(app *fiber.App) {
 }
 
 func (foodController FoodController) FindAll(c *fiber.Ctx) error {
-	response := foodController.FoodService.FindAll(c.Context())
-	return c.Status(fiber.StatusOK).JSON(model.GeneralResponse{
-		Code:    200,
+	queryParams := new(model.FoodFilter)
+	if err := c.QueryParser(queryParams); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(model.GeneralResponse{
+			Code:    fiber.StatusBadRequest,
+			Message: "Invalid parameter",
+			Data:    err,
+		})
+	}
+
+	response, err := foodController.FoodService.FindAll(c.Context(), queryParams)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(model.GeneralResponse{
+			Code:    fiber.StatusBadRequest,
+			Message: fmt.Sprintf("Fetch data failed: %s", err.Error()),
+			Data:    response,
+		})
+	}
+	return c.Status(fiber.StatusCreated).JSON(model.GeneralResponse{
+		Code:    201,
 		Message: "Success",
 		Data:    response,
 	})

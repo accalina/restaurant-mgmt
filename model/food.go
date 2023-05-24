@@ -9,13 +9,19 @@ import (
 	"github.com/google/uuid"
 )
 
+type FoodFilter struct {
+	Filter
+	ID   *string `json:"id"`
+	Name string  `json:"name"`
+}
+
 type FoodModel struct {
 	Id        uuid.UUID `json:"id"`
 	Name      string    `json:"name"`
 	Price     int64     `json:"price"`
 	Qty       int32     `json:"qty"`
-	CreatedAt time.Time `json:"created_at"`
-	UpdatedAt time.Time `json:"updated_at"`
+	CreatedAt time.Time `json:"createdAt"`
+	UpdatedAt time.Time `json:"updatedAt"`
 }
 
 type FoodCreteOrUpdateModel struct {

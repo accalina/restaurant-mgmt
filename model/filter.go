@@ -15,9 +15,3 @@ func (f *Filter) CalculateOffset() int {
 	f.Offset = (f.Page - 1) * f.Limit
 	return f.Offset
 }
-
-func (f *Filter) SetDefaultOrderBy() {
-	if f.OrderBy == "" {
-		f.OrderBy = "updated_at"
-	}
-}

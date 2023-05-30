@@ -26,6 +26,7 @@ func (foodController FoodController) Route(app *fiber.App) {
 	food.Get("/", foodController.FindAll)
 	food.Get("/:id", foodController.FindById)
 	food.Post("/", foodController.Create)
+	food.Put("/", foodController.Update)
 	food.Delete("/:id", foodController.Delete)
 }
 

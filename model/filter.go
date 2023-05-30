@@ -11,6 +11,19 @@ type Filter struct {
 	EndDate   string `json:"endDate,omitempty" time_format:"2006-01-02"`
 }
 
+func DefaultFilter() *Filter {
+	return &Filter{
+		Limit:     10,
+		Page:      1,
+		Offset:    0,
+		Search:    "",
+		OrderBy:   "updated_at",
+		Sort:      "desc",
+		StartDate: "",
+		EndDate:   "",
+	}
+}
+
 func (f *Filter) CalculateOffset() int {
 	f.Offset = (f.Page - 1) * f.Limit
 	return f.Offset

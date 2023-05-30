@@ -29,7 +29,7 @@ func (userService *userServiceImpl) FindAll(ctx context.Context) (response []mod
 		createdAt := time.Time{}
 		createdAt = *user.CreatedAt
 		response = append(response, model.UserModel{
-			Id:        user.Id,
+			Id:        user.ID,
 			Username:  user.Username,
 			CreatedAt: createdAt,
 		})
@@ -50,7 +50,7 @@ func (userService *userServiceImpl) FindById(ctx context.Context, id string) (mo
 	createdAt = *user.CreatedAt
 	updatedAt = *user.UpdatedAt
 	return model.UserModel{
-		Id:        user.Id,
+		Id:        user.ID,
 		Username:  user.Username,
 		CreatedAt: createdAt,
 		UpdatedAt: updatedAt,
@@ -64,7 +64,7 @@ func (userService *userServiceImpl) Register(ctx context.Context, userModel mode
 	exception.PanicLogging(err)
 
 	user := entity.User{
-		Id:        id,
+		ID:        id,
 		Username:  userModel.Username,
 		Password:  password,
 		Role:      entity.Role.User,
@@ -83,7 +83,7 @@ func (userService *userServiceImpl) Login(ctx context.Context, username string, 
 
 	// Update lastLogin
 	userEntity := entity.User{LastLogin: &currentTime}
-	errUpdateLastlogin := userService.UserRepository.Update(ctx, userEntity, user.Id.String())
+	errUpdateLastlogin := userService.UserRepository.Update(ctx, userEntity, user.ID.String())
 	if errUpdateLastlogin != nil {
 		return model.UserModel{}, err
 	}
@@ -93,7 +93,7 @@ func (userService *userServiceImpl) Login(ctx context.Context, username string, 
 	updatedAt = *user.UpdatedAt
 
 	return model.UserModel{
-		Id:        user.Id,
+		Id:        user.ID,
 		Username:  user.Username,
 		LastLogin: currentTime,
 		CreatedAt: createdAt,

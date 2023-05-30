@@ -23,7 +23,7 @@ type foodRepositoryImpl struct {
 }
 
 func (repository *foodRepositoryImpl) Insert(ctx context.Context, food entity.Food) entity.Food {
-	food.Id = uuid.New()
+	food.ID = uuid.New()
 	err := repository.DB.Create(&food).Error
 	exception.PanicLogging(err)
 	return food

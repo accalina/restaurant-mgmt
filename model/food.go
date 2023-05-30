@@ -17,23 +17,14 @@ type FoodFilter struct {
 
 func NewFoodFilter() *FoodFilter {
 	return &FoodFilter{
-		Filter: Filter{
-			Limit:     10,
-			Page:      1,
-			Offset:    0,
-			Search:    "",
-			OrderBy:   "updated_at",
-			Sort:      "desc",
-			StartDate: "",
-			EndDate:   "",
-		},
-		ID:   new(string),
-		Name: "",
+		Filter: *DefaultFilter(),
+		ID:     new(string),
+		Name:   "",
 	}
 }
 
 type FoodModel struct {
-	Id        uuid.UUID  `json:"id"`
+	ID        uuid.UUID  `json:"id"`
 	Name      string     `json:"name"`
 	Price     int64      `json:"price"`
 	Qty       int32      `json:"qty"`

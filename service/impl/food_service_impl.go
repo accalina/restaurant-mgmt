@@ -39,7 +39,7 @@ func (service *foodServiceImpl) FindAll(ctx context.Context, filter *model.FoodF
 	meta = model.NewMeta(filter.Page, filter.Limit, count)
 	for _, food := range foods {
 		result = append(result, model.FoodModel{
-			Id:        food.Id,
+			ID:        food.ID,
 			Name:      food.Name,
 			Price:     food.Price,
 			Qty:       food.Qty,
@@ -57,7 +57,7 @@ func (service *foodServiceImpl) FindById(ctx context.Context, id string) (model.
 	}
 
 	return model.FoodModel{
-		Id:        food.Id,
+		ID:        food.ID,
 		Name:      food.Name,
 		Price:     food.Price,
 		Qty:       food.Qty,

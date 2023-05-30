@@ -23,8 +23,11 @@ func NewDatabase(config Config, isRunMigration bool) *gorm.DB {
 	exception.PanicLogging(err)
 
 	// Run Migration
+	// Related Model will be automatically migrated
 	if isRunMigration {
 		exception.PanicLogging(db.AutoMigrate(&entity.Food{}))
+		exception.PanicLogging(db.AutoMigrate(&entity.OrderItem{}))
+		exception.PanicLogging(db.AutoMigrate(&entity.Invoice{}))
 		exception.PanicLogging(db.AutoMigrate(&entity.User{}))
 	}
 

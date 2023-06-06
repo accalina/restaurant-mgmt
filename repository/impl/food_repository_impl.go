@@ -33,7 +33,7 @@ func (repository *foodRepositoryImpl) FindAll(ctx context.Context, filter *model
 	err = repository.setFilter(repository.DB, filter).Order(clause.OrderByColumn{
 		Column: clause.Column{Name: filter.OrderBy},
 		Desc:   strings.ToUpper(filter.Sort) == "DESC",
-	}).Limit(filter.Limit).Offset(filter.CalculateOffset()).Find(&foods).Error
+	}).Limit(filter.Limit).Offset(filter.CalculateOffset()).Where("deleted_at is null").Find(&foods).Error
 	return
 }
 

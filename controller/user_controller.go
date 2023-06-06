@@ -1,6 +1,8 @@
 package controller
 
 import (
+	"fmt"
+
 	"github.com/accalina/restaurant-mgmt/common"
 	"github.com/accalina/restaurant-mgmt/configuration"
 	"github.com/accalina/restaurant-mgmt/exception"
@@ -23,9 +25,10 @@ func (userController UserController) Route(app *fiber.App) {
 	user := app.Group("/user", middleware.LoggerMiddleware)
 	user.Post("/register", userController.Register)
 	user.Post("/login", userController.Login)
-	user.Get("/", userController.FindAll)
-	user.Get("/:id", userController.FindById)
-	user.Delete("/:id", userController.Delete)
+	user.Post("/logout", middleware.RegisteredLogger, userController.Logout)
+	user.Get("/", middleware.AdminLogger, userController.FindAll)
+	user.Get("/:id", middleware.AdminLogger, userController.FindById)
+	user.Delete("/:id", middleware.AdminLogger, userController.Delete)
 }
 
 func (userController UserController) FindAll(c *fiber.Ctx) error {
@@ -107,6 +110,16 @@ func (userController UserController) Login(c *fiber.Ctx) error {
 		Code:    201,
 		Message: "Success",
 		Data:    response,
+	})
+}
+
+func (userController UserController) Logout(c *fiber.Ctx) error {
+	username := fmt.Sprintf("%s", c.Locals("username"))
+	userController.UserService.Logout(c.Context(), username)
+
+	return c.Status(fiber.StatusOK).JSON(model.GeneralResponse{
+		Code:    200,
+		Message: "Success",
 	})
 }
 

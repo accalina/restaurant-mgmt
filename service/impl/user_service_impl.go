@@ -3,6 +3,8 @@ package impl
 import (
 	"context"
 	"errors"
+	"os"
+	"strconv"
 	"time"
 
 	"github.com/accalina/restaurant-mgmt/common"
@@ -11,15 +13,17 @@ import (
 	"github.com/accalina/restaurant-mgmt/model"
 	"github.com/accalina/restaurant-mgmt/repository"
 	"github.com/accalina/restaurant-mgmt/service"
+	"github.com/go-redis/redis/v8"
 	"github.com/google/uuid"
 )
 
 type userServiceImpl struct {
 	repository.UserRepository
+	Redis *redis.Client
 }
 
-func NewUserServiceImpl(userRepository *repository.UserRepository) service.UserService {
-	return &userServiceImpl{UserRepository: *userRepository}
+func NewUserServiceImpl(userRepository *repository.UserRepository, redis *redis.Client) service.UserService {
+	return &userServiceImpl{UserRepository: *userRepository, Redis: redis}
 }
 
 func (userService *userServiceImpl) FindAll(ctx context.Context) (response []model.UserModel) {
@@ -74,31 +78,33 @@ func (userService *userServiceImpl) Register(ctx context.Context, userModel mode
 	return userModel
 }
 
-func (userService *userServiceImpl) Login(ctx context.Context, username string, password string) (model.UserModel, error) {
+func (userService *userServiceImpl) Login(ctx context.Context, username string, password string) (model.ResponseLogin, error) {
 	currentTime := time.Now()
 	user, err := userService.UserRepository.Login(ctx, username, password)
 	if err != nil {
-		return model.UserModel{}, errors.New("user not found")
+		return model.ResponseLogin{}, errors.New("user not found")
 	}
 
 	// Update lastLogin
 	userEntity := entity.User{LastLogin: &currentTime}
 	errUpdateLastlogin := userService.UserRepository.Update(ctx, userEntity, user.ID.String())
 	if errUpdateLastlogin != nil {
-		return model.UserModel{}, err
+		return model.ResponseLogin{}, err
 	}
-	createdAt := time.Time{}
-	updatedAt := time.Time{}
-	createdAt = *user.CreatedAt
-	updatedAt = *user.UpdatedAt
+	token := common.GenerateToken(user.Username, user.Role)
+	expiredTime, err := strconv.Atoi(os.Getenv("JWT_EXPIRE_MINUTES_COUNT"))
+	exception.PanicLogging(err)
 
-	return model.UserModel{
-		Id:        user.ID,
-		Username:  user.Username,
-		LastLogin: currentTime,
-		CreatedAt: createdAt,
-		UpdatedAt: updatedAt,
+	err = userService.Redis.Set(ctx, user.Username, user.Role, time.Duration(expiredTime)*time.Minute).Err()
+	exception.PanicLogging(err)
+
+	return model.ResponseLogin{
+		Token: token,
 	}, nil
+}
+
+func (userService userServiceImpl) Logout(ctx context.Context, username string) {
+	userService.Redis.Del(ctx, username)
 }
 
 func (userService *userServiceImpl) Update(ctx context.Context, userModel model.UserUpdateModel, id string) model.UserUpdateModel {

@@ -25,6 +25,10 @@ type UserUpdateModel struct {
 	Password string `json:"password" validate:"required,min=6"`
 }
 
+type ResponseLogin struct {
+	Token string `json:"token"`
+}
+
 func (f *UserCreateModel) Validate() error {
 	validate := validator.New()
 	return validate.Struct(f)

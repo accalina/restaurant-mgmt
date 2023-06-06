@@ -20,7 +20,7 @@ func NewOrderController(s *service.OrderService, c configuration.Config) *OrderC
 }
 
 func (c OrderController) Route(app *fiber.App) {
-	order := app.Group("/order", middleware.LoggerMiddleware)
+	order := app.Group("/order", middleware.RegisteredLogger)
 	order.Get("/", c.getAllFood)
 	order.Get("/:id", c.getDetailOrderByID)
 	order.Post("/", c.createOrder)

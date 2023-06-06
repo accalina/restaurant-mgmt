@@ -9,7 +9,7 @@ services:
     volumes:
       - .env:/app/.env:ro
     healthcheck:
-      test: curl --fail localhost:8001 || exit 1
+      test: netstat -tulpn | grep 8001 || exit 1
       interval: 10s
       timeout: 5s
       retries: 2

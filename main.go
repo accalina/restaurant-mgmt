@@ -19,6 +19,7 @@ func main() {
 	isRunMigration := true
 	config := configuration.New()
 	database := configuration.NewDatabase(config, isRunMigration)
+	redis := configuration.NewRedis(config)
 
 	//  Repository
 	foodRepository := repository.NewFoodRepositoryImpl(database)
@@ -31,7 +32,7 @@ func main() {
 
 	// Service
 	foodService := service.NewFoodServiceImpl(&foodRepository)
-	userService := service.NewUserServiceImpl(&userRepository)
+	userService := service.NewUserServiceImpl(&userRepository, redis)
 	menuService := service.NewMenuServiceImpl(&menuRepository)
 	tableService := service.NewTableServiceImpl(&tableRepository)
 	orderService := service.NewOrderServiceImpl(&orderRepository)

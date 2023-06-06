@@ -23,9 +23,9 @@ func (c MenuController) Route(app *fiber.App) {
 	menu := app.Group("/menu", middleware.LoggerMiddleware)
 	menu.Get("/", c.getAllFood)
 	menu.Get("/:id", c.getDetailMenuByID)
-	menu.Post("/", c.createMenu)
-	menu.Put("/:id", c.updateMenu)
-	menu.Delete("/:id", c.deleteMenu)
+	menu.Post("/", middleware.AdminLogger, c.createMenu)
+	menu.Put("/:id", middleware.AdminLogger, c.updateMenu)
+	menu.Delete("/:id", middleware.AdminLogger, c.deleteMenu)
 }
 
 func (c MenuController) getAllFood(ctx *fiber.Ctx) error {

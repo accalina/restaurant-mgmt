@@ -1,0 +1,15 @@
+version: '3'
+services:
+  restaurant-mgmt:
+    build: .
+    image: restaurant-mgmt:1.0
+    container_name: restaurant-mgmt
+    ports:
+      - 8002:8001
+    volumes:
+      - .env:/app/.env:ro
+    healthcheck:
+      test: curl --fail localhost:8001 || exit 1
+      interval: 10s
+      timeout: 5s
+      retries: 2

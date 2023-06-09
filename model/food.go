@@ -5,7 +5,6 @@ import (
 	"io"
 	"time"
 
-	"github.com/go-playground/validator/v10"
 	"github.com/google/uuid"
 )
 
@@ -41,9 +40,4 @@ type FoodCreteOrUpdateModel struct {
 func (f *FoodCreteOrUpdateModel) FromJSON(r io.Reader) error {
 	e := json.NewDecoder(r)
 	return e.Decode(f)
-}
-
-func (f *FoodCreteOrUpdateModel) Validate() error {
-	validate := validator.New()
-	return validate.Struct(f)
 }

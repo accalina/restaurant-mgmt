@@ -33,8 +33,3 @@ func (f *UserCreateModel) Validate() error {
 	validate := validator.New()
 	return validate.Struct(f)
 }
-
-func (f *UserUpdateModel) Validate() error {
-	validate := validator.New()
-	return validate.Struct(f)
-}

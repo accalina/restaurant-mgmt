@@ -2,8 +2,6 @@ package model
 
 import (
 	"time"
-
-	"github.com/go-playground/validator/v10"
 )
 
 type OrderItemResponse struct {
@@ -33,9 +31,4 @@ type OrderItemCreateOrUpdateModel struct {
 	Qty     int    `json:"qty" validate:"required,min=1"`
 	FoodId  string `json:"foodId" validate:"required,len=36"`
 	OrderId string `json:"orderId" validate:"required,len=36"`
-}
-
-func (f *OrderItemCreateOrUpdateModel) Validate() error {
-	validate := validator.New()
-	return validate.Struct(f)
 }

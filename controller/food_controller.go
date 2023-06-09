@@ -78,7 +78,7 @@ func (foodController FoodController) Create(c *fiber.Ctx) error {
 	var request model.FoodCreteOrUpdateModel
 	err := c.BodyParser(&request)
 	exception.PanicLogging(err)
-	err = request.Validate()
+	err = common.Validate(&request)
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(model.GeneralResponse{
 			Code:    400,
@@ -102,7 +102,7 @@ func (foodController FoodController) Update(c *fiber.Ctx) error {
 	var request model.FoodCreteOrUpdateModel
 	err := c.BodyParser(&request)
 	exception.PanicLogging(err)
-	err = request.Validate()
+	err = common.Validate(&request)
 	exception.PanicLogging(err)
 
 	if err != nil {

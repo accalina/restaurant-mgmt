@@ -3,6 +3,7 @@ package controller
 import (
 	"fmt"
 
+	"github.com/accalina/restaurant-mgmt/common"
 	"github.com/accalina/restaurant-mgmt/configuration"
 	"github.com/accalina/restaurant-mgmt/middleware"
 	"github.com/accalina/restaurant-mgmt/model"
@@ -81,7 +82,7 @@ func (c *InvoiceController) createInvoice(ctx *fiber.Ctx) error {
 			Message: fmt.Sprintf("Invalid request: %s", err.Error()),
 		})
 	}
-	if err = request.Validate(); err != nil {
+	if err = common.Validate(&request); err != nil {
 		return ctx.Status(fiber.StatusBadRequest).JSON(model.GeneralResponse{
 			Code:    fiber.StatusBadRequest,
 			Message: "Invalid request",
@@ -112,7 +113,7 @@ func (c *InvoiceController) updateInvoice(ctx *fiber.Ctx) error {
 			Message: fmt.Sprintf("Invalid request: %s", err.Error()),
 		})
 	}
-	if err := request.Validate(); err != nil {
+	if err := common.Validate(&request); err != nil {
 		return ctx.Status(fiber.StatusBadRequest).JSON(model.GeneralResponse{
 			Code:    fiber.StatusBadRequest,
 			Message: "Invalid request",

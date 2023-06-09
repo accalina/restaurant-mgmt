@@ -2,8 +2,6 @@ package model
 
 import (
 	"time"
-
-	"github.com/go-playground/validator/v10"
 )
 
 type OrderResponse struct {
@@ -32,9 +30,4 @@ func NewOrderFilter() *OrderFilter {
 type OrderCreateOrUpdateModel struct {
 	ID      string `json:"id" validate:"max=36"`
 	TableID string `json:"tableId" validate:"required,len=36"`
-}
-
-func (f *OrderCreateOrUpdateModel) Validate() error {
-	validate := validator.New()
-	return validate.Struct(f)
 }

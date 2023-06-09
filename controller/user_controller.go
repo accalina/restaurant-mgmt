@@ -62,7 +62,7 @@ func (userController UserController) Register(c *fiber.Ctx) error {
 	var request model.UserCreateModel
 	err := c.BodyParser(&request)
 	exception.PanicLogging(err)
-	err = request.Validate()
+	err = common.Validate(&request)
 	exception.PanicLogging(err)
 
 	if err != nil {
@@ -86,7 +86,7 @@ func (userController UserController) Login(c *fiber.Ctx) error {
 	var request model.UserCreateModel
 	err := c.BodyParser(&request)
 	exception.PanicLogging(err)
-	err = request.Validate()
+	err = common.Validate(&request)
 	exception.PanicLogging(err)
 
 	if err != nil {
@@ -169,7 +169,7 @@ func (userController UserController) Update(c *fiber.Ctx) error {
 	var request model.UserUpdateModel
 	err := c.BodyParser(&request)
 	exception.PanicLogging(err)
-	err = request.Validate()
+	err = common.Validate(&request)
 	exception.PanicLogging(err)
 
 	if err != nil {

@@ -2,8 +2,6 @@ package model
 
 import (
 	"time"
-
-	"github.com/go-playground/validator/v10"
 )
 
 type MenuResponse struct {
@@ -39,9 +37,4 @@ type MenuCreateOrUpdateModel struct {
 	Category  string `json:"category" validate:"required,min=1"`
 	StartDate string `json:"startDate" validate:"required,datetime=2006-01-02"`
 	EndDate   string `json:"endDate" validate:"required,datetime=2006-01-02"`
-}
-
-func (f *MenuCreateOrUpdateModel) Validate() error {
-	validate := validator.New()
-	return validate.Struct(f)
 }

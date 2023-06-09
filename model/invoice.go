@@ -2,8 +2,6 @@ package model
 
 import (
 	"time"
-
-	"github.com/go-playground/validator/v10"
 )
 
 type InvoiceResponse struct {
@@ -34,9 +32,4 @@ type InvoiceCreateOrUpdateModel struct {
 	PaymentMethod string `json:"paymentMethod" validate:"required,min=1"`
 	PaymentStatus string `json:"paymentStatus" validate:"required,min=1"`
 	OrderId       string `json:"orderId" validate:"required,len=36"`
-}
-
-func (f *InvoiceCreateOrUpdateModel) Validate() error {
-	validate := validator.New()
-	return validate.Struct(f)
 }

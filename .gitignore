@@ -21,3 +21,4 @@
 go.work
 .env
 restaurant-mgmt
+coverage.txt

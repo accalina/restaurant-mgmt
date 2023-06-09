@@ -22,14 +22,14 @@ func NewMenuController(s *service.MenuService, c configuration.Config) *MenuCont
 
 func (c MenuController) Route(app *fiber.App) {
 	menu := app.Group("/menu", middleware.LoggerMiddleware)
-	menu.Get("/", c.getAllFood)
+	menu.Get("/", c.getAllMenu)
 	menu.Get("/:id", c.getDetailMenuByID)
 	menu.Post("/", middleware.AdminLogger, c.createMenu)
 	menu.Put("/:id", middleware.AdminLogger, c.updateMenu)
 	menu.Delete("/:id", middleware.AdminLogger, c.deleteMenu)
 }
 
-func (c MenuController) getAllFood(ctx *fiber.Ctx) error {
+func (c MenuController) getAllMenu(ctx *fiber.Ctx) error {
 	queryParams := model.NewMenuFilter()
 	if err := ctx.QueryParser(queryParams); err != nil {
 		return ctx.Status(fiber.StatusBadRequest).JSON(model.GeneralResponse{

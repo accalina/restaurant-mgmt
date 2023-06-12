@@ -1,0 +1,122 @@
+definitions:
+  entity.Menu:
+    properties:
+      category:
+        type: string
+      createdAt:
+        type: string
+      deletedAt:
+        type: string
+      endDate:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      startDate:
+        type: string
+      updatedAt:
+        type: string
+    type: object
+  model.MenuCreateOrUpdateModel:
+    properties:
+      category:
+        minLength: 1
+        type: string
+      endDate:
+        type: string
+      id:
+        maxLength: 36
+        type: string
+      name:
+        minLength: 1
+        type: string
+      startDate:
+        type: string
+    required:
+    - category
+    - endDate
+    - name
+    - startDate
+    type: object
+  model.ResponseLogin:
+    properties:
+      token:
+        type: string
+    type: object
+  model.UserCreateModel:
+    properties:
+      password:
+        minLength: 6
+        type: string
+      username:
+        minLength: 3
+        type: string
+    required:
+    - password
+    - username
+    type: object
+info:
+  contact:
+    email: your@mail.com
+    name: API Support
+  description: This is an auto-generated API Docs.
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: RESTAURANT-MGMT API
+  version: "1.0"
+paths:
+  /menu:
+    post:
+      consumes:
+      - application/json
+      description: Create a new menu.
+      parameters:
+      - description: Menu attribute
+        in: body
+        name: Menu
+        required: true
+        schema:
+          $ref: '#/definitions/model.MenuCreateOrUpdateModel'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entity.Menu'
+      security:
+      - ApiKeyAuth: []
+      summary: create a new menu
+      tags:
+      - Menu
+  /user/login:
+    post:
+      consumes:
+      - application/json
+      description: Create a new access token.
+      parameters:
+      - description: Login atributes
+        in: body
+        name: loginRequest
+        required: true
+        schema:
+          $ref: '#/definitions/model.UserCreateModel'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.ResponseLogin'
+      summary: create a new access token
+      tags:
+      - Token
+securityDefinitions:
+  ApiKeyAuth:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

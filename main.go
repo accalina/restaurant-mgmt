@@ -6,6 +6,7 @@ import (
 
 	"github.com/accalina/restaurant-mgmt/configuration"
 	"github.com/accalina/restaurant-mgmt/controller"
+	_ "github.com/accalina/restaurant-mgmt/docs"
 	repository "github.com/accalina/restaurant-mgmt/repository/impl"
 	service "github.com/accalina/restaurant-mgmt/service/impl"
 	"github.com/gofiber/fiber/v2"
@@ -13,6 +14,18 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/recover"
 )
 
+// @title RESTAURANT-MGMT API
+// @version 1.0
+// @description This is an auto-generated API Docs.
+// @termsOfService http://swagger.io/terms/
+// @contact.name API Support
+// @contact.email your@mail.com
+// @license.name Apache 2.0
+// @license.url http://www.apache.org/licenses/LICENSE-2.0.html
+// @securityDefinitions.apikey ApiKeyAuth
+// @in header
+// @name Authorization
+// @BasePath /
 func main() {
 
 	// Setup config
@@ -55,6 +68,7 @@ func main() {
 	app.Use(cors.New())
 
 	// Routing
+	controller.SwaggerRoute(app) // Register a route for API Docs (Swagger).
 	foodController.Route(app)
 	homeController.Route(app)
 	userController.Route(app)

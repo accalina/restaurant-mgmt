@@ -82,6 +82,15 @@ func (userController UserController) Register(c *fiber.Ctx) error {
 	})
 }
 
+// GetNewAccessToken method for create a new access token.
+// @Description Create a new access token.
+// @Summary create a new access token
+// @Tags Token
+// @Accept json
+// @Produce json
+// @Param loginRequest body model.UserCreateModel true "Login atributes"
+// @Success 200 {object} model.ResponseLogin"
+// @Router /user/login [post]
 func (userController UserController) Login(c *fiber.Ctx) error {
 	var request model.UserCreateModel
 	err := c.BodyParser(&request)

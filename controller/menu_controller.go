@@ -73,6 +73,16 @@ func (c *MenuController) getDetailMenuByID(ctx *fiber.Ctx) error {
 	})
 }
 
+// CreateBook func for creates a new book.
+// @Description Create a new menu.
+// @Summary create a new menu
+// @Tags Menu
+// @Accept json
+// @Produce json
+// @Param Menu body model.MenuCreateOrUpdateModel true "Menu attribute"
+// @Success 200 {object} entity.Menu
+// @Security ApiKeyAuth
+// @Router /menu [post]
 func (c *MenuController) createMenu(ctx *fiber.Ctx) error {
 	var request model.MenuCreateOrUpdateModel
 	err := ctx.BodyParser(&request)

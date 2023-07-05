@@ -1,6 +1,10 @@
 dep:
 	go mod tidy
 
+# mocks all interfaces for unit test
+mocks:
+	@mockery --all --keeptree --output=mocks --case underscore
+
 # unit test & calculate code coverage
 test:
 	@echo "\x1b[32;1m>>> running unit test and calculate coverage\x1b[0m"

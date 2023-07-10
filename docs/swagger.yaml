@@ -1,4 +1,25 @@
 definitions:
+  entity.Food:
+    properties:
+      createdAt:
+        type: string
+      deletedAt:
+        type: string
+      id:
+        type: string
+      menu:
+        $ref: '#/definitions/entity.Menu'
+      menuId:
+        type: string
+      name:
+        type: string
+      price:
+        type: integer
+      qty:
+        type: integer
+      updatedAt:
+        type: string
+    type: object
   entity.Menu:
     properties:
       category:
@@ -9,6 +30,10 @@ definitions:
         type: string
       endDate:
         type: string
+      foods:
+        items:
+          $ref: '#/definitions/entity.Food'
+        type: array
       id:
         type: string
       name:

@@ -36,6 +36,7 @@ func (a *App) Serve() {
 	orderController := controller.NewOrderController(service.GetSharedService())
 	orderItemController := controller.NewOrderItemController(service.GetSharedService())
 	invoiceController := controller.NewInvoiceController(service.GetSharedService())
+
 	userController.Route(a.engine)
 	menuController.Route(a.engine)
 	foodController.Route(a.engine)
@@ -43,6 +44,7 @@ func (a *App) Serve() {
 	orderController.Route(a.engine)
 	orderItemController.Route(a.engine)
 	invoiceController.Route(a.engine)
+	controller.SwaggerRoute(a.engine)
 
 	log.Fatal(
 		a.engine.Listen(fmt.Sprintf(":%s", env.BaseEnv().ServerPort)),

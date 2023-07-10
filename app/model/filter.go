@@ -9,9 +9,10 @@ type Filter struct {
 	Sort      string `json:"sort,omitempty" default:"desc" lower:"true"`
 	StartDate string `json:"startDate,omitempty" time_format:"2006-01-02"`
 	EndDate   string `json:"endDate,omitempty" time_format:"2006-01-02"`
+	Preloads []string `json:"-"`
 }
 
-func DefaultFilter() *Filter {
+func DefaultFilter(preloads ...string) *Filter {
 	return &Filter{
 		Limit:     10,
 		Page:      1,
@@ -21,6 +22,7 @@ func DefaultFilter() *Filter {
 		Sort:      "desc",
 		StartDate: "",
 		EndDate:   "",
+		Preloads:   preloads,
 	}
 }
 

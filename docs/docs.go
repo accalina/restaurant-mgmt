@@ -99,6 +99,38 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "entity.Food": {
+            "type": "object",
+            "properties": {
+                "createdAt": {
+                    "type": "string"
+                },
+                "deletedAt": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "menu": {
+                    "$ref": "#/definitions/entity.Menu"
+                },
+                "menuId": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "price": {
+                    "type": "integer"
+                },
+                "qty": {
+                    "type": "integer"
+                },
+                "updatedAt": {
+                    "type": "string"
+                }
+            }
+        },
         "entity.Menu": {
             "type": "object",
             "properties": {
@@ -113,6 +145,12 @@ const docTemplate = `{
                 },
                 "endDate": {
                     "type": "string"
+                },
+                "foods": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/entity.Food"
+                    }
                 },
                 "id": {
                     "type": "string"

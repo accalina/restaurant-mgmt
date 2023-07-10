@@ -8,6 +8,7 @@ type TableResponse struct {
 	ID             string     `json:"id"`
 	No             int        `json:"no"`
 	NumberOfGuests int        `json:"numberOfGuests"`
+	IsAvailable    bool       `json:"isAvailable"`
 	CreatedAt      time.Time  `json:"createdAt"`
 	UpdatedAt      *time.Time `json:"updatedAt"`
 	DeletedAt      *time.Time `json:"deletedAt"`
@@ -15,13 +16,15 @@ type TableResponse struct {
 
 type TableFilter struct {
 	Filter
-	ID *string `json:"id"`
+	ID          *string `json:"id"`
+	IsAvailable *string `json:"isAvailable"`
 }
 
 func NewTableFilter() *TableFilter {
 	return &TableFilter{
-		Filter: *DefaultFilter(),
-		ID:     new(string),
+		Filter:      *DefaultFilter(),
+		ID:          new(string),
+		IsAvailable: new(string),
 	}
 }
 

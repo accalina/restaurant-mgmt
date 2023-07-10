@@ -22,11 +22,12 @@ func (c OrderController) Route(app *fiber.App) {
 	order.Get("/:id", c.getDetailOrderByID)
 	order.Post("/", c.createOrder)
 	order.Put("/:id", c.updateOrder)
+	order.Put("/complete/:id", c.completeOrder)
 	order.Delete("/:id", c.deleteOrder)
 }
 
 func (c OrderController) getAllFood(ctx *fiber.Ctx) error {
-	queryParams := model.NewOrderFilter()
+	queryParams := model.NewOrderFilter("Table")
 	if err := ctx.QueryParser(queryParams); err != nil {
 		return ctx.Status(fiber.StatusBadRequest).JSON(model.GeneralResponse{
 			Code:    fiber.StatusBadRequest,
@@ -119,6 +120,38 @@ func (c *OrderController) updateOrder(ctx *fiber.Ctx) error {
 
 	request.ID = ctx.Params("id")
 	result, err := c.service.Order().UpdateOrder(ctx.Context(), request)
+	if err != nil {
+		return ctx.Status(fiber.StatusBadRequest).JSON(model.GeneralResponse{
+			Code:    fiber.StatusBadRequest,
+			Message: fmt.Sprintf("Update Order failed: %s", err.Error()),
+		})
+	}
+
+	return ctx.Status(fiber.StatusCreated).JSON(model.GeneralResponse{
+		Code:    fiber.StatusCreated,
+		Message: "Success",
+		Data:    result,
+	})
+}
+
+func (c *OrderController) completeOrder(ctx *fiber.Ctx) error {
+	var request model.OrderDoneModel
+	if err := ctx.BodyParser(&request); err != nil {
+		return ctx.Status(fiber.StatusBadRequest).JSON(model.GeneralResponse{
+			Code: fiber.StatusBadRequest,
+			Message: fmt.Sprintf("Invalid request: %s", err.Error()),
+		})
+	}
+	if err := common.Validate(&request); err != nil {
+		return ctx.Status(fiber.StatusBadRequest).JSON(model.GeneralResponse{
+			Code:    fiber.StatusBadRequest,
+			Message: "Invalid request",
+			Errors:  model.Extract(err),
+		})
+	}
+
+	request.ID = ctx.Params("id")
+	result, err := c.service.Order().DoneOrder(ctx.Context(), request)
 	if err != nil {
 		return ctx.Status(fiber.StatusBadRequest).JSON(model.GeneralResponse{
 			Code:    fiber.StatusBadRequest,

@@ -5,14 +5,15 @@ import (
 )
 
 type MenuResponse struct {
-	ID        string     `json:"id"`
-	Name      string     `json:"name"`
-	Category  string     `json:"category"`
-	StartDate *time.Time `json:"startDate"`
-	EndDate   *time.Time `json:"endDate"`
-	CreatedAt time.Time  `json:"createdAt"`
-	UpdatedAt *time.Time `json:"updatedAt"`
-	DeletedAt *time.Time `json:"deletedAt"`
+	ID        string         `json:"id"`
+	Name      string         `json:"name"`
+	Category  string         `json:"category"`
+	StartDate *time.Time     `json:"startDate"`
+	EndDate   *time.Time     `json:"endDate"`
+	CreatedAt time.Time      `json:"createdAt"`
+	UpdatedAt *time.Time     `json:"updatedAt"`
+	DeletedAt *time.Time     `json:"deletedAt"`
+	Foods     []FoodResponseBase `json:"foods"`
 }
 
 type MenuFilter struct {
@@ -22,9 +23,9 @@ type MenuFilter struct {
 	Category string  `json:"category"`
 }
 
-func NewMenuFilter() *MenuFilter {
+func NewMenuFilter(preloads ...string) *MenuFilter {
 	return &MenuFilter{
-		Filter:   *DefaultFilter(),
+		Filter:   *DefaultFilter(preloads...),
 		ID:       new(string),
 		Name:     "",
 		Category: "",

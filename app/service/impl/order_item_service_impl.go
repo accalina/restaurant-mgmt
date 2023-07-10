@@ -5,7 +5,6 @@ import (
 	"errors"
 	"time"
 
-	"github.com/accalina/restaurant-mgmt/app/entity"
 	"github.com/accalina/restaurant-mgmt/app/model"
 	"github.com/accalina/restaurant-mgmt/app/service"
 	"github.com/accalina/restaurant-mgmt/pkg/configuration"
@@ -43,43 +42,42 @@ func (s *orderItemServiceImpl) GetAllOrderItem(ctx context.Context, filter *mode
 	return
 }
 
-func (s *orderItemServiceImpl) GetDetailOrderItem(ctx context.Context, id string) (result model.OrderItemResponse, err error) {
-	var data entity.OrderItem
-	filter := model.OrderItemFilter{ID: &id}
-	data, err = s.repoSQL.OrderItemRepo().Find(ctx, &filter)
+func (s *orderItemServiceImpl) GetDetailOrderItem(ctx context.Context, id string) (result *model.OrderItemResponse, err error) {
+	filter := model.NewOrderItemFilter()
+	filter.ID = &id
+	orderItem, err := s.repoSQL.OrderItemRepo().Find(ctx, filter)
 	if err != nil {
 		return
 	}
 
-	result.ID = data.ID
-	result.Qty = data.Qty
-	result.FoodId = data.FoodId
-	result.OrderId = data.OrderId
-	result.CreatedAt = data.CreatedAt
-	result.UpdatedAt = data.UpdatedAt
-	result.DeletedAt = data.DeletedAt
+	result = &model.OrderItemResponse{
+		ID:        orderItem.ID,
+		Qty:       orderItem.Qty,
+		FoodId:    orderItem.FoodId,
+		OrderId:   orderItem.OrderId,
+		CreatedAt: orderItem.CreatedAt,
+		UpdatedAt: orderItem.UpdatedAt,
+		DeletedAt: orderItem.DeletedAt,
+	}
 
 	return
 }
 
-func (s *orderItemServiceImpl) CreateOrderItem(ctx context.Context, orderItemModel model.OrderItemCreateOrUpdateModel) (*entity.OrderItem, error) {
-	// sid = transaction
-	
-	// check food quoantity
-	var food entity.Food
+func (s *orderItemServiceImpl) CreateOrderItem(ctx context.Context, orderItemModel model.OrderItemCreateOrUpdateModel) (result *model.OrderItemResponse, err error) {
 	foodFilter := model.FoodFilter{ID: &orderItemModel.FoodId}
 	food, err := s.repoSQL.FoodRepo().Find(ctx, &foodFilter)
 	if err != nil {
-		return &entity.OrderItem{}, err
+		return
 	}
 	if food.Qty < int32(orderItemModel.Qty) {
-		return &entity.OrderItem{}, errors.New("Not enough Food Quoantity")
+		return result, errors.New("Insufficient food quoantity")
 	}
 
-	var orderItem entity.OrderItem
+	// create or update order item
 	filter := model.NewOrderItemFilter()
 	filter.FoodID = &orderItemModel.FoodId
-	orderItem, err = s.repoSQL.OrderItemRepo().Find(ctx, filter)
+	filter.OrderID = &orderItemModel.OrderId
+	orderItem, err := s.repoSQL.OrderItemRepo().Find(ctx, filter)
 	if err != nil {
 		orderItem.Qty = orderItemModel.Qty
 		orderItem.FoodId = orderItemModel.FoodId
@@ -89,38 +87,81 @@ func (s *orderItemServiceImpl) CreateOrderItem(ctx context.Context, orderItemMod
 	}
 
 	tx := s.repoSQL.GetDB().Begin()
-	orderItemInstance, err := s.repoSQL.OrderItemRepo().Save(tx, &orderItem)
-	if err != nil{
+	if _, err = s.repoSQL.OrderItemRepo().Save(tx, &orderItem); err != nil {
 		tx.Rollback()
-		return &entity.OrderItem{}, err
+		return
 	}
-	
+
 	// Decrease food stockctx
 	food.Qty -= int32(orderItemModel.Qty)
-	_, err = s.repoSQL.FoodRepo().Save(tx, &food)
-	if err != nil{
+	if _, err = s.repoSQL.FoodRepo().Save(tx, food); err != nil {
 		tx.Rollback()
-		return &entity.OrderItem{}, err
+		return
+	}
+
+	result = &model.OrderItemResponse{
+		ID:        orderItem.ID,
+		Qty:       orderItem.Qty,
+		FoodId:    orderItem.FoodId,
+		OrderId:   orderItem.OrderId,
+		CreatedAt: orderItem.CreatedAt,
+		UpdatedAt: orderItem.UpdatedAt,
+		DeletedAt: orderItem.DeletedAt,
 	}
 
 	tx.Commit()
-
-	return orderItemInstance, err
+	return
 }
 
-func (s *orderItemServiceImpl) UpdateOrderItem(ctx context.Context, orderItemModel model.OrderItemCreateOrUpdateModel) (*entity.OrderItem, error) {
-	var orderItem entity.OrderItem
-	filter := model.OrderItemFilter{ID: &orderItemModel.ID}
-	orderItem, err := s.repoSQL.OrderItemRepo().Find(ctx, &filter)
+func (s *orderItemServiceImpl) UpdateOrderItem(ctx context.Context, orderItemModel model.OrderItemChangeQtyModel) (result *model.OrderItemResponse, err error) {
+	filter := model.NewOrderItemFilter("Food")
+	filter.ID = &orderItemModel.ID
+	orderItem, err := s.repoSQL.OrderItemRepo().Find(ctx, filter)
 	if err != nil {
-		return &entity.OrderItem{}, err
+		return
 	}
 
-	orderItem.Qty = orderItemModel.Qty
-	orderItem.FoodId = orderItemModel.FoodId
-	orderItem.OrderId = orderItemModel.OrderId
+	return_qty := orderItem.Qty - orderItemModel.Qty
+	food := orderItem.Food
+	food.Qty += int32(return_qty)
+	if food.Qty < 0 {
+		return result, errors.New("Insufficient food stock")
+	}
 
-	return s.repoSQL.OrderItemRepo().Save(s.repoSQL.GetDB(), &orderItem)
+	tx := s.repoSQL.GetDB().Begin()
+	// return / decrease food stock
+	if _, err = s.repoSQL.FoodRepo().Save(s.repoSQL.GetDB(), &food); err != nil {
+		tx.Rollback()
+		return
+	}
+
+	// update order item quantity
+	orderItem.Qty = orderItemModel.Qty
+	if _, err = s.repoSQL.OrderItemRepo().Save(tx, &orderItem); err != nil {
+		tx.Rollback()
+		return
+	}
+
+	// delete order item
+	if orderItemModel.Qty == 0 {
+		if err = s.repoSQL.OrderItemRepo().Delete(tx, &orderItem); err != nil {
+			tx.Rollback()
+			return
+		}
+	}
+
+	result = &model.OrderItemResponse{
+		ID:        orderItem.ID,
+		Qty:       orderItem.Qty,
+		FoodId:    orderItem.FoodId,
+		OrderId:   orderItem.OrderId,
+		CreatedAt: orderItem.CreatedAt,
+		UpdatedAt: orderItem.UpdatedAt,
+		DeletedAt: orderItem.DeletedAt,
+	}
+
+	tx.Commit()
+	return
 }
 
 func (s *orderItemServiceImpl) DeleteOrderItem(ctx context.Context, id string) (err error) {

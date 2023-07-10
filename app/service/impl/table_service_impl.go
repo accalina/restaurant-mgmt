@@ -33,6 +33,7 @@ func (s *tableServiceImpl) GetAllTable(ctx context.Context, filter *model.TableF
 			ID:             table.ID,
 			No:             table.No,
 			NumberOfGuests: table.NumberOfGuests,
+			IsAvailable:    table.IsAvailable,
 			CreatedAt:      table.CreatedAt,
 			UpdatedAt:      table.UpdatedAt,
 			DeletedAt:      table.DeletedAt,
@@ -41,44 +42,72 @@ func (s *tableServiceImpl) GetAllTable(ctx context.Context, filter *model.TableF
 	return
 }
 
-func (s *tableServiceImpl) GetDetailTable(ctx context.Context, id string) (result model.TableResponse, err error) {
-	var data entity.Table
-	filter := model.TableFilter{ID: &id}
-	data, err = s.repoSQL.TableRepo().Find(ctx, &filter)
+func (s *tableServiceImpl) GetDetailTable(ctx context.Context, id string) (result *model.TableResponse, err error) {
+	filter := model.NewTableFilter()
+	filter.ID = &id
+	table, err := s.repoSQL.TableRepo().Find(ctx, filter)
 	if err != nil {
 		return
 	}
 
-	result.ID = data.ID
-	result.No = data.No
-	result.NumberOfGuests = data.NumberOfGuests
-	result.CreatedAt = data.CreatedAt
-	result.UpdatedAt = data.UpdatedAt
-	result.DeletedAt = data.DeletedAt
+	result = &model.TableResponse{
+		ID:             table.ID,
+		No:             table.No,
+		NumberOfGuests: table.NumberOfGuests,
+		IsAvailable:    table.IsAvailable,
+		CreatedAt:      table.CreatedAt,
+		UpdatedAt:      table.UpdatedAt,
+		DeletedAt:      table.DeletedAt,
+	}
 
 	return
 }
 
-func (s *tableServiceImpl) CreateTable(ctx context.Context, tableModel model.TableCreateOrUpdateModel) (*entity.Table, error) {
-	table := entity.Table{
+func (s *tableServiceImpl) CreateTable(ctx context.Context, tableModel model.TableCreateOrUpdateModel) (result *model.TableResponse, err error) {
+	table := &entity.Table{
 		No:             tableModel.No,
 		NumberOfGuests: tableModel.NumberOfGuests,
 	}
-	return s.repoSQL.TableRepo().Save(ctx, &table)
+	table, err = s.repoSQL.TableRepo().Save(s.repoSQL.GetDB(), table)
+	if err != nil {
+		return
+	}
+	result = &model.TableResponse{
+		ID:             table.ID,
+		No:             table.No,
+		NumberOfGuests: table.NumberOfGuests,
+		IsAvailable:    table.IsAvailable,
+		CreatedAt:      table.CreatedAt,
+		UpdatedAt:      table.UpdatedAt,
+		DeletedAt:      table.DeletedAt,
+	}
+	return
 }
 
-func (s *tableServiceImpl) UpdateTable(ctx context.Context, tableModel model.TableCreateOrUpdateModel) (*entity.Table, error) {
-	var table entity.Table
-	filter := model.TableFilter{ID: &tableModel.ID}
-	table, err := s.repoSQL.TableRepo().Find(ctx, &filter)
+func (s *tableServiceImpl) UpdateTable(ctx context.Context, tableModel model.TableCreateOrUpdateModel) (result *model.TableResponse, err error) {
+	filter := model.NewTableFilter()
+	filter.ID = &tableModel.ID
+	table, err := s.repoSQL.TableRepo().Find(ctx, filter)
 	if err != nil {
-		return &entity.Table{}, err
+		return
 	}
 
 	table.No = tableModel.No
 	table.NumberOfGuests = tableModel.NumberOfGuests
-
-	return s.repoSQL.TableRepo().Save(ctx, &table)
+	table, err = s.repoSQL.TableRepo().Save(s.repoSQL.GetDB(), table)
+	if err != nil {
+		return
+	}
+	result = &model.TableResponse{
+		ID:             table.ID,
+		No:             table.No,
+		NumberOfGuests: table.NumberOfGuests,
+		IsAvailable:    table.IsAvailable,
+		CreatedAt:      table.CreatedAt,
+		UpdatedAt:      table.UpdatedAt,
+		DeletedAt:      table.DeletedAt,
+	}
+	return
 }
 
 func (s *tableServiceImpl) DeleteTable(ctx context.Context, id string) (err error) {
@@ -90,6 +119,6 @@ func (s *tableServiceImpl) DeleteTable(ctx context.Context, id string) (err erro
 
 	deleted_at := time.Now()
 	table.DeletedAt = &deleted_at
-	_, err = s.repoSQL.TableRepo().Save(ctx, &table)
+	_, err = s.repoSQL.TableRepo().Save(s.repoSQL.GetDB(), table)
 	return
 }

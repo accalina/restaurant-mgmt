@@ -40,14 +40,18 @@ func (r *invoiceRepositoryImpl) Find(ctx context.Context, filter *model.InvoiceF
 	return
 }
 
-func (r *invoiceRepositoryImpl) Save(ctx context.Context, invoice *entity.Invoice) (*entity.Invoice, error) {
+func (r *invoiceRepositoryImpl) Save(tx *gorm.DB, invoice *entity.Invoice) (result *entity.Invoice, err error) {
 	if invoice.ID == "" {
 		invoice.ID = uuid.NewString()
-		err := r.DB.Create(invoice).Error
-		return invoice, err
+		err = tx.Create(invoice).Error
+	} else {
+		err = tx.Save(invoice).Error
 	}
-	err := r.DB.Save(invoice).Error
-	return invoice, err
+
+	if err != nil {return}
+
+	err = tx.Preload("Order").First(&result, "id = ?", invoice.ID).Error
+	return
 }
 
 func (r *invoiceRepositoryImpl) setFilter(db *gorm.DB, filter *model.InvoiceFilter) *gorm.DB {
@@ -57,6 +61,10 @@ func (r *invoiceRepositoryImpl) setFilter(db *gorm.DB, filter *model.InvoiceFilt
 
 	if filter.Search != "" {
 		db = db.Where("id ILIKE '%%' || ? || '%%' OR name ILIKE '%%' || ? || '%%' OR category ILIKE '%%' || ? || '%%'", filter.Search, filter.Search, filter.Search)
+	}
+
+	for _, preload := range(filter.Preloads) {
+		db = db.Preload(preload)
 	}
 
 	return db

@@ -102,7 +102,7 @@ func (c *OrderItemController) createOrderItem(ctx *fiber.Ctx) error {
 }
 
 func (c *OrderItemController) updateOrderItem(ctx *fiber.Ctx) error {
-	var request model.OrderItemCreateOrUpdateModel
+	var request model.OrderItemChangeQtyModel
 	if err := ctx.BodyParser(&request); err != nil {
 		return ctx.Status(fiber.StatusBadRequest).JSON(model.GeneralResponse{
 			Code:    fiber.StatusBadRequest,

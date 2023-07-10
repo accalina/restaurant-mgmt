@@ -35,19 +35,24 @@ func (r *orderRepositoryImpl) Count(ctx context.Context, filter *model.OrderFilt
 	return
 }
 
-func (r *orderRepositoryImpl) Find(ctx context.Context, filter *model.OrderFilter) (result entity.Order, err error) {
+func (r *orderRepositoryImpl) Find(ctx context.Context, filter *model.OrderFilter) (result *entity.Order, err error) {
 	err = r.setFilter(r.DB, filter).First(&result).Error
 	return
 }
 
-func (r *orderRepositoryImpl) Save(ctx context.Context, order *entity.Order) (*entity.Order, error) {
+func (r *orderRepositoryImpl) Save(tx *gorm.DB, order *entity.Order) (result *entity.Order, err error) {
 	if order.ID == "" {
 		order.ID = uuid.NewString()
-		err := r.DB.Create(order).Error
-		return order, err
+		err = tx.Create(order).Error
+	} else {
+		err = tx.Save(order).Error
 	}
-	err := r.DB.Save(order).Error
-	return order, err
+
+	if err != nil {return}
+
+	err = tx.Preload("Table").First(&result, "id = ?", order.ID).Error
+	return
+
 }
 
 func (r *orderRepositoryImpl) setFilter(db *gorm.DB, filter *model.OrderFilter) *gorm.DB {
@@ -57,6 +62,10 @@ func (r *orderRepositoryImpl) setFilter(db *gorm.DB, filter *model.OrderFilter) 
 
 	if filter.Search != "" {
 		db = db.Where("id ILIKE '%%' || ? || '%%' OR name ILIKE '%%' || ? || '%%' OR category ILIKE '%%' || ? || '%%'", filter.Search, filter.Search, filter.Search)
+	}
+
+	for _, preload := range(filter.Preloads) {
+		db = db.Preload(preload)
 	}
 
 	return db

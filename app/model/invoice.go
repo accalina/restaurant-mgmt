@@ -5,14 +5,14 @@ import (
 )
 
 type InvoiceResponse struct {
-	ID             string     `json:"id"`
-	PaymentMethod  string     `json:"paymentMethod"`
-	PaymentStatus  string     `json:"paymentStatus"`
-	PaymentDueDate time.Time  `json:"paymentDueDate"`
-	OrderId        string     `json:"orderId"`
-	CreatedAt      time.Time  `json:"createdAt"`
-	UpdatedAt      *time.Time `json:"updatedAt"`
-	DeletedAt      *time.Time `json:"deletedAt"`
+	ID             string        `json:"id"`
+	PaymentMethod  string        `json:"paymentMethod"`
+	PaymentStatus  string        `json:"paymentStatus"`
+	PaymentDueDate time.Time     `json:"paymentDueDate"`
+	Order          OrderResponse `json:"order"`
+	CreatedAt      time.Time     `json:"createdAt"`
+	UpdatedAt      *time.Time    `json:"updatedAt"`
+	DeletedAt      *time.Time    `json:"deletedAt"`
 }
 
 type InvoiceFilter struct {
@@ -20,9 +20,9 @@ type InvoiceFilter struct {
 	ID *string `json:"id"`
 }
 
-func NewInvoiceFilter() *InvoiceFilter {
+func NewInvoiceFilter(preloads ...string) *InvoiceFilter {
 	return &InvoiceFilter{
-		Filter: *DefaultFilter(),
+		Filter: *DefaultFilter(preloads...),
 		ID:     new(string),
 	}
 }

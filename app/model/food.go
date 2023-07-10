@@ -4,6 +4,16 @@ import (
 	"time"
 )
 
+type FoodResponseBase struct {
+	ID        string     `json:"id"`
+	Name      string     `json:"name"`
+	Price     int64      `json:"price"`
+	Qty       int32      `json:"qty"`
+	CreatedAt time.Time  `json:"createdAt"`
+	UpdatedAt *time.Time `json:"updatedAt"`
+	DeletedAt *time.Time `json:"deletedAt"`
+}
+
 type FoodResponse struct {
 	ID        string     `json:"id"`
 	Name      string     `json:"name"`
@@ -21,9 +31,9 @@ type FoodFilter struct {
 	Name string  `json:"name"`
 }
 
-func NewFoodFilter() *FoodFilter {
+func NewFoodFilter(preloads ...string) *FoodFilter {
 	return &FoodFilter{
-		Filter: *DefaultFilter(),
+		Filter: *DefaultFilter(preloads...),
 		ID:     new(string),
 		Name:   "",
 	}

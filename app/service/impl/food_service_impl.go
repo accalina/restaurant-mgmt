@@ -43,52 +43,76 @@ func (s *foodServiceImpl) GetAllFood(ctx context.Context, filter *model.FoodFilt
 	return
 }
 
-func (s *foodServiceImpl) GetDetailFood(ctx context.Context, id string) (result model.FoodResponse, err error) {
-	var data entity.Food
-	filter := model.FoodFilter{ID: &id}
-	data, err = s.repoSQL.FoodRepo().Find(ctx, &filter)
+func (s *foodServiceImpl) GetDetailFood(ctx context.Context, id string) (result *model.FoodResponse, err error) {
+	filter := model.NewFoodFilter("Menu")
+	filter.ID = &id
+	food, err := s.repoSQL.FoodRepo().Find(ctx, filter)
 	if err != nil {
 		return
 	}
-
-	result.ID = data.ID
-	result.Name = data.Name
-	result.Price = data.Price
-	result.Qty = data.Qty
-	result.MenuID = data.MenuID
-	result.CreatedAt = data.CreatedAt
-	result.UpdatedAt = data.UpdatedAt
-	result.DeletedAt = data.DeletedAt
+	result = &model.FoodResponse{
+		ID:        food.ID,
+		Name:      food.Name,
+		Price:     food.Price,
+		Qty:       food.Qty,
+		MenuID:    food.MenuID,
+		CreatedAt: food.CreatedAt,
+		UpdatedAt: food.UpdatedAt,
+		DeletedAt: food.DeletedAt,
+	}
 
 	return
 }
 
-func (s *foodServiceImpl) CreateFood(ctx context.Context, foodModel model.FoodCreateOrUpdateModel) (*entity.Food, error) {
-	food := entity.Food{
+func (s *foodServiceImpl) CreateFood(ctx context.Context, foodModel model.FoodCreateOrUpdateModel) (result *model.FoodResponse, err error) {
+	food := &entity.Food{
 		Name:   foodModel.Name,
 		Price:  foodModel.Price,
 		Qty:    foodModel.Qty,
 		MenuID: foodModel.MenuID,
 	}
-	tx := s.repoSQL.GetDB()
 
-	return s.repoSQL.FoodRepo().Save(tx, &food)
+	food, err = s.repoSQL.FoodRepo().Save(s.repoSQL.GetDB(), food)
+	if err != nil {
+		return
+	}
+	result = &model.FoodResponse{
+		ID:        food.ID,
+		Name:      food.Name,
+		Price:     food.Price,
+		Qty:       food.Qty,
+		MenuID:    food.MenuID,
+		CreatedAt: food.CreatedAt,
+		UpdatedAt: food.UpdatedAt,
+		DeletedAt: food.DeletedAt,
+	}
+	return
 }
 
-func (s *foodServiceImpl) UpdateFood(ctx context.Context, foodModel model.FoodCreateOrUpdateModel) (*entity.Food, error) {
-	var food entity.Food
+func (s *foodServiceImpl) UpdateFood(ctx context.Context, foodModel model.FoodCreateOrUpdateModel) (result *model.FoodResponse, err error) {
 	filter := model.FoodFilter{ID: &foodModel.ID}
 	food, err := s.repoSQL.FoodRepo().Find(ctx, &filter)
 	if err != nil {
-		return &entity.Food{}, err
+		return
 	}
 
 	food.Name = foodModel.Name
 	food.Price = foodModel.Price
 	food.Qty = foodModel.Qty
 	food.MenuID = foodModel.MenuID
+	food, err = s.repoSQL.FoodRepo().Save(s.repoSQL.GetDB(), food)
+	result = &model.FoodResponse{
+		ID:        food.ID,
+		Name:      food.Name,
+		Price:     food.Price,
+		Qty:       food.Qty,
+		MenuID:    food.MenuID,
+		CreatedAt: food.CreatedAt,
+		UpdatedAt: food.UpdatedAt,
+		DeletedAt: food.DeletedAt,
+	}
 
-	return s.repoSQL.FoodRepo().Save(s.repoSQL.GetDB(), &food)
+	return
 }
 
 func (s *foodServiceImpl) DeleteFood(ctx context.Context, id string) (err error) {
@@ -100,6 +124,6 @@ func (s *foodServiceImpl) DeleteFood(ctx context.Context, id string) (err error)
 
 	deleted_at := time.Now()
 	food.DeletedAt = &deleted_at
-	_, err = s.repoSQL.FoodRepo().Save(s.repoSQL.GetDB(), &food)
+	_, err = s.repoSQL.FoodRepo().Save(s.repoSQL.GetDB(), food)
 	return
 }

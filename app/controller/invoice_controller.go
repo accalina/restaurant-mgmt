@@ -18,15 +18,15 @@ func NewInvoiceController(service service.Service) *InvoiceController {
 
 func (c InvoiceController) Route(app *fiber.App) {
 	invoice := app.Group("/invoice", middleware.LoggerMiddleware)
-	invoice.Get("/", c.getAllFood)
+	invoice.Get("/", c.getAllInvoice)
 	invoice.Get("/:id", c.getDetailInvoiceByID)
 	invoice.Post("/", c.createInvoice)
 	invoice.Put("/:id", c.updateInvoice)
 	invoice.Delete("/:id", c.deleteInvoice)
 }
 
-func (c InvoiceController) getAllFood(ctx *fiber.Ctx) error {
-	queryParams := model.NewInvoiceFilter()
+func (c InvoiceController) getAllInvoice(ctx *fiber.Ctx) error {
+	queryParams := model.NewInvoiceFilter("Order.Table")
 	if err := ctx.QueryParser(queryParams); err != nil {
 		return ctx.Status(fiber.StatusBadRequest).JSON(model.GeneralResponse{
 			Code:    fiber.StatusBadRequest,

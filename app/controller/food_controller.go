@@ -26,7 +26,7 @@ func (foodController FoodController) Route(app *fiber.App) {
 }
 
 func (c FoodController) FindAll(ctx *fiber.Ctx) error {
-	queryParams := model.NewFoodFilter()
+	queryParams := model.NewFoodFilter("Menu")
 	if err := ctx.QueryParser(queryParams); err != nil {
 		return ctx.Status(fiber.StatusBadRequest).JSON(model.GeneralResponse{
 			Code:    fiber.StatusBadRequest,

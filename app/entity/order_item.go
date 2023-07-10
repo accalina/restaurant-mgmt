@@ -5,13 +5,13 @@ import (
 )
 
 type OrderItem struct {
-	ID        string     `gorm:"primaryKey;column:id;type:varchar(36)" json:"id"`
-	Qty       int        `gorm:"column:qty" json:"qty"`
-	FoodId    string     `gorm:"column:food_id;type:varchar(36)" json:"foodId"`
-	Food      Food       `json:"-"`
-	OrderId   string     `gorm:"column:order_id;type:varchar(36)" json:"orderId"`
-	Order     Order      `json:"-"`
-	CreatedAt time.Time  `gorm:"column:created_at" json:"createdAt"`
-	UpdatedAt *time.Time `gorm:"column:updated_at;default:null" json:"updatedAt"`
-	DeletedAt *time.Time `gorm:"column:deleted_at;default:null" json:"deletedAt"`
+	ID        string `gorm:"primaryKey;column:id;type:varchar(36)"`
+	Qty       int    `gorm:"column:qty"`
+	FoodId    string `gorm:"column:food_id;type:varchar(36)"`
+	Food      Food
+	OrderId   string `gorm:"column:order_id;type:varchar(36)"`
+	Order     Order
+	CreatedAt time.Time  `gorm:"column:created_at"`
+	UpdatedAt *time.Time `gorm:"column:updated_at;default:null"`
+	DeletedAt *time.Time `gorm:"column:deleted_at;default:null"`
 }

@@ -50,6 +50,11 @@ func (r *orderItemRepositoryImpl) Save(tx *gorm.DB, orderItem *entity.OrderItem)
 	return orderItem, err
 }
 
+func (r *orderItemRepositoryImpl) Delete(tx *gorm.DB, orderItem *entity.OrderItem) (err error) {
+	err = tx.Delete(orderItem).Error
+	return
+}
+
 func (r *orderItemRepositoryImpl) setFilter(db *gorm.DB, filter *model.OrderItemFilter) *gorm.DB {
 	if *filter.ID != "" {
 		db = db.Where("id = ?", *filter.ID)
@@ -59,8 +64,16 @@ func (r *orderItemRepositoryImpl) setFilter(db *gorm.DB, filter *model.OrderItem
 		db = db.Where("food_id = ?", *filter.FoodID)
 	}
 
+	if *filter.OrderID != "" {
+		db = db.Where("order_id = ?", *filter.OrderID)
+	}
+
 	if filter.Search != "" {
 		db = db.Where("id ILIKE '%%' || ? || '%%' OR name ILIKE '%%' || ? || '%%' OR category ILIKE '%%' || ? || '%%'", filter.Search, filter.Search, filter.Search)
+	}
+
+	for _, preload := range(filter.Preloads) {
+		db = db.Preload(preload)
 	}
 
 	return db

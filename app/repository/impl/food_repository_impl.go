@@ -35,7 +35,7 @@ func (r *foodRepositoryImpl) Count(ctx context.Context, filter *model.FoodFilter
 	return
 }
 
-func (r *foodRepositoryImpl) Find(ctx context.Context, filter *model.FoodFilter) (result entity.Food, err error) {
+func (r *foodRepositoryImpl) Find(ctx context.Context, filter *model.FoodFilter) (result *entity.Food, err error) {
 	err = r.setFilter(r.DB, filter).First(&result).Error
 	return
 }
@@ -57,6 +57,10 @@ func (r *foodRepositoryImpl) setFilter(db *gorm.DB, filter *model.FoodFilter) *g
 
 	if filter.Search != "" {
 		db = db.Where("id ILIKE '%%' || ? || '%%' OR name ILIKE '%%' || ? || '%%' OR category ILIKE '%%' || ? || '%%'", filter.Search, filter.Search, filter.Search)
+	}
+
+	for _, preload := range(filter.Preloads) {
+		db = db.Preload(preload)
 	}
 
 	return db

@@ -11,6 +11,6 @@ import (
 type FoodRepository interface {
 	FetchAll(ctx context.Context, filter *model.FoodFilter) ([]entity.Food, error)
 	Count(ctx context.Context, filter *model.FoodFilter) int
-	Find(ctx context.Context, filter *model.FoodFilter) (entity.Food, error)
+	Find(ctx context.Context, filter *model.FoodFilter) (*entity.Food, error)
 	Save(tx *gorm.DB, data *entity.Food) (*entity.Food, error)
 }

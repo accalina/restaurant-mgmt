@@ -18,13 +18,15 @@ type OrderItemFilter struct {
 	Filter
 	ID *string `json:"id"`
 	FoodID *string `json:"foodId"`
+	OrderID *string `json:"orderId"`
 }
 
-func NewOrderItemFilter() *OrderItemFilter {
+func NewOrderItemFilter(preloads ...string) *OrderItemFilter {
 	return &OrderItemFilter{
-		Filter: *DefaultFilter(),
+		Filter: *DefaultFilter(preloads...),
 		ID:     new(string),
 		FoodID:     new(string),
+		OrderID:     new(string),
 	}
 }
 
@@ -33,4 +35,9 @@ type OrderItemCreateOrUpdateModel struct {
 	Qty     int    `json:"qty" validate:"required,min=1"`
 	FoodId  string `json:"foodId" validate:"required,len=36"`
 	OrderId string `json:"orderId" validate:"required,len=36"`
+}
+
+type OrderItemChangeQtyModel struct {
+	ID      string `json:"id" validate:"max=36"`
+	Qty     int    `json:"qty" validate:"min=0"`
 }

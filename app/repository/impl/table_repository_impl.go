@@ -35,18 +35,18 @@ func (r *tableRepositoryImpl) Count(ctx context.Context, filter *model.TableFilt
 	return
 }
 
-func (r *tableRepositoryImpl) Find(ctx context.Context, filter *model.TableFilter) (result entity.Table, err error) {
+func (r *tableRepositoryImpl) Find(ctx context.Context, filter *model.TableFilter) (result *entity.Table, err error) {
 	err = r.setFilter(r.DB, filter).First(&result).Error
 	return
 }
 
-func (r *tableRepositoryImpl) Save(ctx context.Context, table *entity.Table) (*entity.Table, error) {
+func (r *tableRepositoryImpl) Save(tx *gorm.DB, table *entity.Table) (*entity.Table, error) {
 	if table.ID == "" {
 		table.ID = uuid.NewString()
-		err := r.DB.Create(table).Error
+		err := tx.Create(table).Error
 		return table, err
 	}
-	err := r.DB.Save(table).Error
+	err := tx.Save(table).Error
 	return table, err
 }
 
@@ -55,8 +55,16 @@ func (r *tableRepositoryImpl) setFilter(db *gorm.DB, filter *model.TableFilter) 
 		db = db.Where("id = ?", *filter.ID)
 	}
 
+	if *filter.IsAvailable != "" {
+		db = db.Where("is_available = ?", *filter.IsAvailable)
+	}
+
 	if filter.Search != "" {
 		db = db.Where("id ILIKE '%%' || ? || '%%' OR name ILIKE '%%' || ? || '%%' OR category ILIKE '%%' || ? || '%%'", filter.Search, filter.Search, filter.Search)
+	}
+
+	for _, preload := range(filter.Preloads) {
+		db = db.Preload(preload)
 	}
 
 	return db

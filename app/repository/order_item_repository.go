@@ -13,4 +13,5 @@ type OrderItemRepository interface {
 	Count(ctx context.Context, filter *model.OrderItemFilter) int
 	Find(ctx context.Context, filter *model.OrderItemFilter) (entity.OrderItem, error)
 	Save(tx *gorm.DB, data *entity.OrderItem) (*entity.OrderItem, error)
+	Delete(tx *gorm.DB, data *entity.OrderItem) (error)
 }

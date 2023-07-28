@@ -6,6 +6,8 @@ import (
 	context "context"
 
 	entity "github.com/accalina/restaurant-mgmt/app/entity"
+	gorm "gorm.io/gorm"
+
 	mock "github.com/stretchr/testify/mock"
 
 	model "github.com/accalina/restaurant-mgmt/app/model"
@@ -80,25 +82,25 @@ func (_m *InvoiceRepository) Find(ctx context.Context, filter *model.InvoiceFilt
 	return r0, r1
 }
 
-// Save provides a mock function with given fields: ctx, data
-func (_m *InvoiceRepository) Save(ctx context.Context, data *entity.Invoice) (*entity.Invoice, error) {
-	ret := _m.Called(ctx, data)
+// Save provides a mock function with given fields: tx, data
+func (_m *InvoiceRepository) Save(tx *gorm.DB, data *entity.Invoice) (*entity.Invoice, error) {
+	ret := _m.Called(tx, data)
 
 	var r0 *entity.Invoice
 	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context, *entity.Invoice) (*entity.Invoice, error)); ok {
-		return rf(ctx, data)
+	if rf, ok := ret.Get(0).(func(*gorm.DB, *entity.Invoice) (*entity.Invoice, error)); ok {
+		return rf(tx, data)
 	}
-	if rf, ok := ret.Get(0).(func(context.Context, *entity.Invoice) *entity.Invoice); ok {
-		r0 = rf(ctx, data)
+	if rf, ok := ret.Get(0).(func(*gorm.DB, *entity.Invoice) *entity.Invoice); ok {
+		r0 = rf(tx, data)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).(*entity.Invoice)
 		}
 	}
 
-	if rf, ok := ret.Get(1).(func(context.Context, *entity.Invoice) error); ok {
-		r1 = rf(ctx, data)
+	if rf, ok := ret.Get(1).(func(*gorm.DB, *entity.Invoice) error); ok {
+		r1 = rf(tx, data)
 	} else {
 		r1 = ret.Error(1)
 	}

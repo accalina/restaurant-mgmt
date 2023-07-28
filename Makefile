@@ -2,6 +2,7 @@ dep:
 	go mod tidy
 
 # mocks all interfaces for unit test
+# make sure install mockery first. go install github.com/vektra/mockery/v2@v2.20.0 
 mocks:
 	@mockery --all --keeptree --output=mocks --case underscore
 

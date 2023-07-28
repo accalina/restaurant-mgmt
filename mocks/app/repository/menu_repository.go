@@ -57,18 +57,20 @@ func (_m *MenuRepository) FetchAll(ctx context.Context, filter *model.MenuFilter
 }
 
 // Find provides a mock function with given fields: ctx, filter
-func (_m *MenuRepository) Find(ctx context.Context, filter *model.MenuFilter) (entity.Menu, error) {
+func (_m *MenuRepository) Find(ctx context.Context, filter *model.MenuFilter) (*entity.Menu, error) {
 	ret := _m.Called(ctx, filter)
 
-	var r0 entity.Menu
+	var r0 *entity.Menu
 	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context, *model.MenuFilter) (entity.Menu, error)); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, *model.MenuFilter) (*entity.Menu, error)); ok {
 		return rf(ctx, filter)
 	}
-	if rf, ok := ret.Get(0).(func(context.Context, *model.MenuFilter) entity.Menu); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, *model.MenuFilter) *entity.Menu); ok {
 		r0 = rf(ctx, filter)
 	} else {
-		r0 = ret.Get(0).(entity.Menu)
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*entity.Menu)
+		}
 	}
 
 	if rf, ok := ret.Get(1).(func(context.Context, *model.MenuFilter) error); ok {

@@ -2,7 +2,6 @@ package repository
 
 import (
 	"github.com/accalina/restaurant-mgmt/app/repository"
-	"github.com/accalina/restaurant-mgmt/app/repository/impl"
 	"gorm.io/gorm"
 )
 
@@ -33,13 +32,13 @@ var globalRepoSQL *repoSqlImpl
 func SetSharedRepoSQL(DB *gorm.DB) {
 	globalRepoSQL = new(repoSqlImpl)
 	globalRepoSQL.DB = DB
-	globalRepoSQL.userRepo = impl.NewUserRepositoryImpl(DB)
-	globalRepoSQL.menuRepo = impl.NewMenuRepositoryImpl(DB)
-	globalRepoSQL.foodRepo = impl.NewFoodRepositoryImpl(DB)
-	globalRepoSQL.tableRepo = impl.NewTableRepositoryImpl(DB)
-	globalRepoSQL.orderRepo = impl.NewOrderRepositoryImpl(DB)
-	globalRepoSQL.orderItemRepo = impl.NewOrderItemRepositoryImpl(DB)
-	globalRepoSQL.invoiceRepo = impl.NewInvoiceRepositoryImpl(DB)
+	globalRepoSQL.userRepo = repository.NewUserRepositoryImpl(DB)
+	globalRepoSQL.menuRepo = repository.NewMenuRepositoryImpl(DB)
+	globalRepoSQL.foodRepo = repository.NewFoodRepositoryImpl(DB)
+	globalRepoSQL.tableRepo = repository.NewTableRepositoryImpl(DB)
+	globalRepoSQL.orderRepo = repository.NewOrderRepositoryImpl(DB)
+	globalRepoSQL.orderItemRepo = repository.NewOrderItemRepositoryImpl(DB)
+	globalRepoSQL.invoiceRepo = repository.NewInvoiceRepositoryImpl(DB)
 }
 
 func GetSharedRepoSQL() RepoSQL {

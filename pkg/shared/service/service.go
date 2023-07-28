@@ -2,7 +2,6 @@ package service
 
 import (
 	appservice "github.com/accalina/restaurant-mgmt/app/service"
-	"github.com/accalina/restaurant-mgmt/app/service/impl"
 )
 
 type Service interface {
@@ -29,13 +28,13 @@ var serviceInstance *serviceImpl
 
 func SetSharedService() {
 	serviceInstance = new(serviceImpl)
-	serviceInstance.UserService = impl.NewUserServiceImpl()
-	serviceInstance.MenuService = impl.NewMenuServiceImpl()
-	serviceInstance.FoodService = impl.NewFoodServiceImpl()
-	serviceInstance.TableService = impl.NewTableServiceImpl()
-	serviceInstance.OrderService = impl.NewOrderServiceImpl()
-	serviceInstance.OrderItemService = impl.NewOrderItemServiceImpl()
-	serviceInstance.InvoiceService = impl.NewInvoiceServiceImpl()
+	serviceInstance.UserService = appservice.NewUserServiceImpl()
+	serviceInstance.MenuService = appservice.NewMenuServiceImpl()
+	serviceInstance.FoodService = appservice.NewFoodServiceImpl()
+	serviceInstance.TableService = appservice.NewTableServiceImpl()
+	serviceInstance.OrderService = appservice.NewOrderServiceImpl()
+	serviceInstance.OrderItemService = appservice.NewOrderItemServiceImpl()
+	serviceInstance.InvoiceService = appservice.NewInvoiceServiceImpl()
 }
 
 func GetSharedService() Service {

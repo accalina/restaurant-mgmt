@@ -59,18 +59,20 @@ func (_m *FoodRepository) FetchAll(ctx context.Context, filter *model.FoodFilter
 }
 
 // Find provides a mock function with given fields: ctx, filter
-func (_m *FoodRepository) Find(ctx context.Context, filter *model.FoodFilter) (entity.Food, error) {
+func (_m *FoodRepository) Find(ctx context.Context, filter *model.FoodFilter) (*entity.Food, error) {
 	ret := _m.Called(ctx, filter)
 
-	var r0 entity.Food
+	var r0 *entity.Food
 	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context, *model.FoodFilter) (entity.Food, error)); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, *model.FoodFilter) (*entity.Food, error)); ok {
 		return rf(ctx, filter)
 	}
-	if rf, ok := ret.Get(0).(func(context.Context, *model.FoodFilter) entity.Food); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, *model.FoodFilter) *entity.Food); ok {
 		r0 = rf(ctx, filter)
 	} else {
-		r0 = ret.Get(0).(entity.Food)
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*entity.Food)
+		}
 	}
 
 	if rf, ok := ret.Get(1).(func(context.Context, *model.FoodFilter) error); ok {

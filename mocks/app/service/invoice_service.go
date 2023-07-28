@@ -17,19 +17,19 @@ type InvoiceService struct {
 }
 
 // CreateInvoice provides a mock function with given fields: ctx, data
-func (_m *InvoiceService) CreateInvoice(ctx context.Context, data model.InvoiceCreateOrUpdateModel) (*entity.Invoice, error) {
+func (_m *InvoiceService) CreateInvoice(ctx context.Context, data model.InvoiceCreateOrUpdateModel) (*model.InvoiceResponse, error) {
 	ret := _m.Called(ctx, data)
 
-	var r0 *entity.Invoice
+	var r0 *model.InvoiceResponse
 	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context, model.InvoiceCreateOrUpdateModel) (*entity.Invoice, error)); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, model.InvoiceCreateOrUpdateModel) (*model.InvoiceResponse, error)); ok {
 		return rf(ctx, data)
 	}
-	if rf, ok := ret.Get(0).(func(context.Context, model.InvoiceCreateOrUpdateModel) *entity.Invoice); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, model.InvoiceCreateOrUpdateModel) *model.InvoiceResponse); ok {
 		r0 = rf(ctx, data)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*entity.Invoice)
+			r0 = ret.Get(0).(*model.InvoiceResponse)
 		}
 	}
 

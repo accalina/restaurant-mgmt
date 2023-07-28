@@ -32,6 +32,20 @@ func (_m *OrderItemRepository) Count(ctx context.Context, filter *model.OrderIte
 	return r0
 }
 
+// Delete provides a mock function with given fields: tx, data
+func (_m *OrderItemRepository) Delete(tx *gorm.DB, data *entity.OrderItem) error {
+	ret := _m.Called(tx, data)
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(*gorm.DB, *entity.OrderItem) error); ok {
+		r0 = rf(tx, data)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
 // FetchAll provides a mock function with given fields: ctx, filter
 func (_m *OrderItemRepository) FetchAll(ctx context.Context, filter *model.OrderItemFilter) ([]entity.OrderItem, error) {
 	ret := _m.Called(ctx, filter)

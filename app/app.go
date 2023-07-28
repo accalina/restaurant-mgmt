@@ -10,6 +10,7 @@ import (
 	"github.com/accalina/restaurant-mgmt/pkg/middleware"
 	"github.com/accalina/restaurant-mgmt/pkg/shared/repository"
 	"github.com/accalina/restaurant-mgmt/pkg/shared/service"
+	"github.com/accalina/restaurant-mgmt/platform/cache"
 	"github.com/accalina/restaurant-mgmt/platform/database"
 	"github.com/gofiber/fiber/v2"
 )
@@ -54,7 +55,7 @@ func (a *App) Serve() {
 func LoadAppConfig() {
 	env.Load()
 	DB := database.NewDatabase()
-	configuration.NewRedis()
+	cache.NewRedis()
 	repository.SetSharedRepoSQL(DB)
 	service.SetSharedService()
 }

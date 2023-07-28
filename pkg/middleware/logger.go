@@ -7,8 +7,8 @@ import (
 	"github.com/accalina/restaurant-mgmt/app/entity"
 	"github.com/accalina/restaurant-mgmt/app/model"
 	"github.com/accalina/restaurant-mgmt/pkg/common"
-	"github.com/accalina/restaurant-mgmt/pkg/configuration"
 	"github.com/accalina/restaurant-mgmt/pkg/exception"
+	"github.com/accalina/restaurant-mgmt/platform/cache"
 	"github.com/go-redis/redis/v8"
 	"github.com/gofiber/fiber/v2"
 )
@@ -29,7 +29,7 @@ func RegisteredLogger(c *fiber.Ctx) error {
 			Errors:  err.Error(),
 		})
 	}
-	redisRole, err := configuration.RedisCache.Get(c.Context(), username).Result()
+	redisRole, err := cache.RedisCache.Get(c.Context(), username).Result()
 	if err == redis.Nil {
 		redisRole = ""
 	} else if err != nil {
@@ -62,7 +62,7 @@ func AdminLogger(c *fiber.Ctx) error {
 		})
 	}
 
-	redisRole, err := configuration.RedisCache.Get(c.Context(), username).Result()
+	redisRole, err := cache.RedisCache.Get(c.Context(), username).Result()
 	if err == redis.Nil {
 		redisRole = ""
 	} else if err != nil {

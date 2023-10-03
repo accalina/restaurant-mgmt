@@ -15,20 +15,19 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-type App struct {
-	engine *fiber.App
+type AppInstance struct {
+	app *fiber.App
 }
 
-func New() *App {
-	app := &App{
-		engine: fiber.New(configuration.NewFiberConfiguration()),
+func New() *AppInstance {
+	return &AppInstance{
+		app: fiber.New(configuration.NewFiberConfiguration()),
 	}
-
-	return app
 }
 
-func (a *App) Serve() {
-	middleware.FiberMiddleware(a.engine)
+func (ai *AppInstance) Serve() {
+	app := ai.app
+	middleware.FiberMiddleware(app)
 
 	userController := controller.NewUserController(service.GetSharedService())
 	menuController := controller.NewMenuController(service.GetSharedService())
@@ -38,17 +37,18 @@ func (a *App) Serve() {
 	orderItemController := controller.NewOrderItemController(service.GetSharedService())
 	invoiceController := controller.NewInvoiceController(service.GetSharedService())
 
-	userController.Route(a.engine)
-	menuController.Route(a.engine)
-	foodController.Route(a.engine)
-	tableController.Route(a.engine)
-	orderController.Route(a.engine)
-	orderItemController.Route(a.engine)
-	invoiceController.Route(a.engine)
-	controller.SwaggerRoute(a.engine)
+	userController.Route(app)
+	menuController.Route(app)
+	foodController.Route(app)
+	tableController.Route(app)
+	orderController.Route(app)
+	orderItemController.Route(app)
+	invoiceController.Route(app)
+	controller.SwaggerRoute(app)
 
+	app.Static("/docs", "./docs")
 	log.Fatal(
-		a.engine.Listen(fmt.Sprintf(":%s", env.BaseEnv().ServerPort)),
+		app.Listen(fmt.Sprintf(":%s", env.BaseEnv().ServerPort)),
 	)
 }
 

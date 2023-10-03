@@ -7,5 +7,10 @@ import (
 
 func SwaggerRoute(app *fiber.App) {
 	route := app.Group("/swagger")
-	route.Get("*", swagger.HandlerDefault) // get one user by ID
+	route.Get("*", swagger.New(swagger.Config{ // custom
+		URL:         "/docs/swagger.json",
+		DeepLinking: false,
+		// Expand ("list") or Collapse ("none") tag groups by default
+		DocExpansion: "none",
+	}))
 }

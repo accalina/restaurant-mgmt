@@ -30,6 +30,9 @@ func New() *App {
 func (a *App) Serve() {
 	middleware.FiberMiddleware(a.engine)
 
+	app.Static("/docs", "./docs")
+	app.Static("/swagger/docs.json", "./docs/swagger.json")
+
 	userController := controller.NewUserController(service.GetSharedService())
 	menuController := controller.NewMenuController(service.GetSharedService())
 	foodController := controller.NewFoodController(service.GetSharedService())

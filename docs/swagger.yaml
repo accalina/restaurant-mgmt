@@ -9,7 +9,7 @@ definitions:
         type: string
       menu:
         $ref: '#/definitions/entity.Menu'
-      menuId:
+      menuID:
         type: string
       name:
         type: string
@@ -43,15 +43,43 @@ definitions:
       updatedAt:
         type: string
     type: object
-  model.MenuCreateOrUpdateModel:
+  model.FoodCreateOrUpdateSwaggerModel:
+    properties:
+      menuId:
+        type: string
+      name:
+        minLength: 1
+        type: string
+      price:
+        minimum: 1
+        type: integer
+      qty:
+        minimum: 1
+        type: integer
+    required:
+    - menuId
+    - name
+    - price
+    - qty
+    type: object
+  model.GeneralResponse:
+    properties:
+      code:
+        type: integer
+      data: {}
+      errors: {}
+      message:
+        type: string
+      meta: {}
+      success:
+        type: boolean
+    type: object
+  model.MenuCreateOrUpdateSwaggerModel:
     properties:
       category:
         minLength: 1
         type: string
       endDate:
-        type: string
-      id:
-        maxLength: 36
         type: string
       name:
         minLength: 1
@@ -93,7 +121,183 @@ info:
   title: RESTAURANT-MGMT API
   version: "1.0"
 paths:
+  /food:
+    get:
+      consumes:
+      - application/json
+      description: List all food.
+      parameters:
+      - description: name search
+        in: query
+        name: search
+        type: string
+      - description: limit search
+        in: query
+        name: limit
+        type: string
+      - description: page search
+        in: query
+        name: page
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/entity.Food'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.GeneralResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.GeneralResponse'
+      summary: List all food
+      tags:
+      - Food
+    post:
+      consumes:
+      - application/json
+      description: Create a new Food.
+      parameters:
+      - description: Food attribute
+        in: body
+        name: Food
+        required: true
+        schema:
+          $ref: '#/definitions/model.FoodCreateOrUpdateSwaggerModel'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entity.Food'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.GeneralResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.GeneralResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: create a new Food
+      tags:
+      - Food
+  /food/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete Food.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.GeneralResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.GeneralResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.GeneralResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Delete Food
+      tags:
+      - Food
+    get:
+      consumes:
+      - application/json
+      description: List detail food.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entity.Food'
+      summary: List detail food
+      tags:
+      - Food
+    put:
+      consumes:
+      - application/json
+      description: Update Food.
+      parameters:
+      - description: Food attribute
+        in: body
+        name: Food
+        required: true
+        schema:
+          $ref: '#/definitions/model.FoodCreateOrUpdateSwaggerModel'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entity.Food'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.GeneralResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.GeneralResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Update Food
+      tags:
+      - Food
   /menu:
+    get:
+      consumes:
+      - application/json
+      description: List all menu.
+      parameters:
+      - description: name search
+        in: query
+        name: search
+        type: string
+      - description: limit search
+        in: query
+        name: limit
+        type: string
+      - description: page search
+        in: query
+        name: page
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/entity.Menu'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.GeneralResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.GeneralResponse'
+      summary: List all menu
+      tags:
+      - Menu
     post:
       consumes:
       - application/json
@@ -104,7 +308,7 @@ paths:
         name: Menu
         required: true
         schema:
-          $ref: '#/definitions/model.MenuCreateOrUpdateModel'
+          $ref: '#/definitions/model.MenuCreateOrUpdateSwaggerModel'
       produces:
       - application/json
       responses:
@@ -112,9 +316,95 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/entity.Menu'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.GeneralResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.GeneralResponse'
       security:
       - ApiKeyAuth: []
       summary: create a new menu
+      tags:
+      - Menu
+  /menu/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete menu.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entity.Menu'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.GeneralResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.GeneralResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Delete menu
+      tags:
+      - Menu
+    get:
+      consumes:
+      - application/json
+      description: Detail menu.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entity.Menu'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.GeneralResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.GeneralResponse'
+      summary: Detail menu
+      tags:
+      - Menu
+    put:
+      consumes:
+      - application/json
+      description: Update menu.
+      parameters:
+      - description: Menu attribute
+        in: body
+        name: Menu
+        required: true
+        schema:
+          $ref: '#/definitions/model.MenuCreateOrUpdateSwaggerModel'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entity.Menu'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.GeneralResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.GeneralResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Update menu
       tags:
       - Menu
   /user/login:
@@ -138,7 +428,31 @@ paths:
             $ref: '#/definitions/model.ResponseLogin'
       summary: create a new access token
       tags:
-      - Token
+      - User
+  /user/register:
+    post:
+      consumes:
+      - application/json
+      description: Create a new User.
+      parameters:
+      - description: User attribute
+        in: body
+        name: User
+        required: true
+        schema:
+          $ref: '#/definitions/model.UserCreateModel'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.ResponseLogin'
+      security:
+      - ApiKeyAuth: []
+      summary: create a new User
+      tags:
+      - User
 securityDefinitions:
   ApiKeyAuth:
     in: header

@@ -46,3 +46,10 @@ type FoodCreateOrUpdateModel struct {
 	Qty    int32  `json:"qty" validate:"required,min=1"`
 	MenuID string `json:"menuId" validate:"required,len=36"`
 }
+
+type FoodCreateOrUpdateSwaggerModel struct {
+	Name   string `json:"name" validate:"required,min=1"`
+	Price  int64  `json:"price" validate:"required,min=1"`
+	Qty    int32  `json:"qty" validate:"required,min=1"`
+	MenuID string `json:"menuId" validate:"required,len=36"`
+}

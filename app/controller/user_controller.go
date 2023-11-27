@@ -11,7 +11,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-type UserController struct { service service.Service }
+type UserController struct{ service service.Service }
 
 func NewUserController(service service.Service) *UserController {
 	return &UserController{service: service}
@@ -54,6 +54,15 @@ func (userController UserController) FindById(c *fiber.Ctx) error {
 	})
 }
 
+// @Description	Create a new User.
+// @Summary		create a new User
+// @Tags		User
+// @Accept		json
+// @Produce		json
+// @Param		User	body		model.UserCreateModel	true	"User attribute"
+// @Success		200				{object}	model.ResponseLogin"
+// @Security	ApiKeyAuth
+// @Router		/user/register [post]
 func (userController UserController) Register(c *fiber.Ctx) error {
 	var request model.UserCreateModel
 	err := c.BodyParser(&request)
@@ -75,18 +84,20 @@ func (userController UserController) Register(c *fiber.Ctx) error {
 		Code:    201,
 		Message: "Success",
 		Data:    response,
+		Success: true,
 	})
 }
 
 // GetNewAccessToken method for create a new access token.
-// @Description Create a new access token.
-// @Summary create a new access token
-// @Tags Token
-// @Accept json
-// @Produce json
-// @Param loginRequest body model.UserCreateModel true "Login atributes"
-// @Success 200 {object} model.ResponseLogin"
-// @Router /user/login [post]
+//
+//	@Description	Create a new access token.
+//	@Summary		create a new access token
+//	@Tags			User
+//	@Accept			json
+//	@Produce		json
+//	@Param			loginRequest	body		model.UserCreateModel	true	"Login atributes"
+//	@Success		200				{object}	model.ResponseLogin"
+//	@Router			/user/login [post]
 func (userController UserController) Login(c *fiber.Ctx) error {
 	var request model.UserCreateModel
 	err := c.BodyParser(&request)

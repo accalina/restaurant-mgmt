@@ -5,14 +5,14 @@ import (
 )
 
 type MenuResponse struct {
-	ID        string         `json:"id"`
-	Name      string         `json:"name"`
-	Category  string         `json:"category"`
-	StartDate *time.Time     `json:"startDate"`
-	EndDate   *time.Time     `json:"endDate"`
-	CreatedAt time.Time      `json:"createdAt"`
-	UpdatedAt *time.Time     `json:"updatedAt"`
-	DeletedAt *time.Time     `json:"deletedAt"`
+	ID        string             `json:"id"`
+	Name      string             `json:"name"`
+	Category  string             `json:"category"`
+	StartDate *time.Time         `json:"startDate"`
+	EndDate   *time.Time         `json:"endDate"`
+	CreatedAt time.Time          `json:"createdAt"`
+	UpdatedAt *time.Time         `json:"updatedAt"`
+	DeletedAt *time.Time         `json:"deletedAt"`
 	Foods     []FoodResponseBase `json:"foods"`
 }
 
@@ -34,6 +34,13 @@ func NewMenuFilter(preloads ...string) *MenuFilter {
 
 type MenuCreateOrUpdateModel struct {
 	ID        string `json:"id" validate:"max=36"`
+	Name      string `json:"name" validate:"required,min=1"`
+	Category  string `json:"category" validate:"required,min=1"`
+	StartDate string `json:"startDate" validate:"required,datetime=2006-01-02"`
+	EndDate   string `json:"endDate" validate:"required,datetime=2006-01-02"`
+}
+
+type MenuCreateOrUpdateSwaggerModel struct {
 	Name      string `json:"name" validate:"required,min=1"`
 	Category  string `json:"category" validate:"required,min=1"`
 	StartDate string `json:"startDate" validate:"required,datetime=2006-01-02"`

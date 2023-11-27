@@ -25,6 +25,18 @@ func (c MenuController) Route(app *fiber.App) {
 	menu.Delete("/:id", middleware.AdminLogger, c.deleteMenu)
 }
 
+// @Summary			List all menu
+// @Description		List all menu.
+// @Tags			Menu
+// @Accept			json
+// @Produce			json
+// @Param        	search	query     string  false  "name search"
+// @Param        	limit	query     string  false  "limit search"
+// @Param        	page    query     string  false  "page search"
+// @Success			200		{array}		entity.Menu
+// @Failure			400		{object}	model.GeneralResponse
+// @Failure			500		{object}	model.GeneralResponse
+// @Router			/menu [get]
 func (c MenuController) getAllMenu(ctx *fiber.Ctx) error {
 	queryParams := model.NewMenuFilter("Foods")
 	if err := ctx.QueryParser(queryParams); err != nil {
@@ -44,7 +56,7 @@ func (c MenuController) getAllMenu(ctx *fiber.Ctx) error {
 		})
 	}
 
-	return ctx.Status(fiber.StatusBadRequest).JSON(model.GeneralResponse{
+	return ctx.Status(fiber.StatusOK).JSON(model.GeneralResponse{
 		Code:    fiber.StatusOK,
 		Message: "Success",
 		Data:    response,
@@ -52,6 +64,15 @@ func (c MenuController) getAllMenu(ctx *fiber.Ctx) error {
 	})
 }
 
+// @Summary			Detail menu
+// @Description		Detail menu.
+// @Tags			Menu
+// @Accept			json
+// @Produce			json
+// @Success			200		{object}	entity.Menu
+// @Failure			400		{object}	model.GeneralResponse
+// @Failure			500		{object}	model.GeneralResponse
+// @Router			/menu/{id} [get]
 func (c *MenuController) getDetailMenuByID(ctx *fiber.Ctx) error {
 	id := ctx.Params("id")
 	menu, err := c.service.Menu().GetDetailMenu(ctx.Context(), id)
@@ -62,23 +83,24 @@ func (c *MenuController) getDetailMenuByID(ctx *fiber.Ctx) error {
 		})
 	}
 
-	return ctx.Status(fiber.StatusBadRequest).JSON(model.GeneralResponse{
+	return ctx.Status(fiber.StatusOK).JSON(model.GeneralResponse{
 		Code:    fiber.StatusOK,
 		Message: "Success",
 		Data:    menu,
 	})
 }
 
-// CreateBook func for creates a new book.
-// @Description Create a new menu.
-// @Summary create a new menu
-// @Tags Menu
-// @Accept json
-// @Produce json
-// @Param Menu body model.MenuCreateOrUpdateModel true "Menu attribute"
-// @Success 200 {object} entity.Menu
-// @Security ApiKeyAuth
-// @Router /menu [post]
+// @Description	Create a new menu.
+// @Summary		create a new menu
+// @Tags		Menu
+// @Accept		json
+// @Produce		json
+// @Param		Menu	body		model.MenuCreateOrUpdateSwaggerModel	true	"Menu attribute"
+// @Success		200		{object}	entity.Menu
+// @Failure		400		{object}	model.GeneralResponse
+// @Failure		500		{object}	model.GeneralResponse
+// @Security	ApiKeyAuth
+// @Router		/menu [post]
 func (c *MenuController) createMenu(ctx *fiber.Ctx) error {
 	var request model.MenuCreateOrUpdateModel
 	err := ctx.BodyParser(&request)
@@ -111,6 +133,17 @@ func (c *MenuController) createMenu(ctx *fiber.Ctx) error {
 	})
 }
 
+// @Description	Update menu.
+// @Summary		Update menu
+// @Tags		Menu
+// @Accept		json
+// @Produce		json
+// @Param		Menu	body		model.MenuCreateOrUpdateSwaggerModel	true	"Menu attribute"
+// @Success		200		{object}	entity.Menu
+// @Failure		400		{object}	model.GeneralResponse
+// @Failure		500		{object}	model.GeneralResponse
+// @Security	ApiKeyAuth
+// @Router		/menu/{id} [put]
 func (c *MenuController) updateMenu(ctx *fiber.Ctx) error {
 	var request model.MenuCreateOrUpdateModel
 	if err := ctx.BodyParser(&request); err != nil {
@@ -143,6 +176,16 @@ func (c *MenuController) updateMenu(ctx *fiber.Ctx) error {
 	})
 }
 
+// @Description	Delete menu.
+// @Summary		Delete menu
+// @Tags		Menu
+// @Accept		json
+// @Produce		json
+// @Success		200		{object}	entity.Menu
+// @Failure		400		{object}	model.GeneralResponse
+// @Failure		500		{object}	model.GeneralResponse
+// @Security	ApiKeyAuth
+// @Router		/menu/{id} [delete]
 func (c *MenuController) deleteMenu(ctx *fiber.Ctx) error {
 	id := ctx.Params("id")
 	err := c.service.Menu().DeleteMenu(ctx.Context(), id)
@@ -153,7 +196,7 @@ func (c *MenuController) deleteMenu(ctx *fiber.Ctx) error {
 		})
 	}
 
-	return ctx.Status(fiber.StatusBadRequest).JSON(model.GeneralResponse{
+	return ctx.Status(fiber.StatusOK).JSON(model.GeneralResponse{
 		Code:    fiber.StatusOK,
 		Message: fmt.Sprintf("Menu ID: %s has been deleted", id),
 	})

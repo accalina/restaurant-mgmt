@@ -25,6 +25,18 @@ func (foodController FoodController) Route(app *fiber.App) {
 	food.Delete("/:id", middleware.AdminLogger, foodController.Delete)
 }
 
+// @Summary			List all food
+// @Description		List all food.
+// @Tags			Food
+// @Accept			json
+// @Produce			json
+// @Param        	search	query     string  false  "name search"
+// @Param        	limit	query     string  false  "limit search"
+// @Param        	page	query     string  false  "page search"
+// @Success			200		{array}		entity.Food
+// @Failure			400		{object}	model.GeneralResponse
+// @Failure			500		{object}	model.GeneralResponse
+// @Router			/food [get]
 func (c FoodController) FindAll(ctx *fiber.Ctx) error {
 	queryParams := model.NewFoodFilter("Menu")
 	if err := ctx.QueryParser(queryParams); err != nil {
@@ -44,7 +56,7 @@ func (c FoodController) FindAll(ctx *fiber.Ctx) error {
 		})
 	}
 
-	return ctx.Status(fiber.StatusBadRequest).JSON(model.GeneralResponse{
+	return ctx.Status(fiber.StatusOK).JSON(model.GeneralResponse{
 		Code:    fiber.StatusOK,
 		Message: "Success",
 		Data:    response,
@@ -52,6 +64,13 @@ func (c FoodController) FindAll(ctx *fiber.Ctx) error {
 	})
 }
 
+// @Summary			List detail food
+// @Description		List detail food.
+// @Tags			Food
+// @Accept			json
+// @Produce			json
+// @Success			200		{object}		entity.Food
+// @Router			/food/{id} [get]
 func (c FoodController) FindById(ctx *fiber.Ctx) error {
 	id := ctx.Params("id")
 	food, err := c.service.Food().GetDetailFood(ctx.Context(), id)
@@ -62,13 +81,24 @@ func (c FoodController) FindById(ctx *fiber.Ctx) error {
 		})
 	}
 
-	return ctx.Status(fiber.StatusBadRequest).JSON(model.GeneralResponse{
+	return ctx.Status(fiber.StatusOK).JSON(model.GeneralResponse{
 		Code:    fiber.StatusOK,
 		Message: "Success",
 		Data:    food,
 	})
 }
 
+// @Description	Create a new Food.
+// @Summary		create a new Food
+// @Tags		Food
+// @Accept		json
+// @Produce		json
+// @Param		Food	body		model.FoodCreateOrUpdateSwaggerModel	true	"Food attribute"
+// @Success		200		{object}	entity.Food
+// @Failure		400		{object}	model.GeneralResponse
+// @Failure		500		{object}	model.GeneralResponse
+// @Security	ApiKeyAuth
+// @Router		/food [post]
 func (c FoodController) Create(ctx *fiber.Ctx) error {
 	var request model.FoodCreateOrUpdateModel
 	err := ctx.BodyParser(&request)
@@ -101,6 +131,17 @@ func (c FoodController) Create(ctx *fiber.Ctx) error {
 	})
 }
 
+// @Description	Update Food.
+// @Summary		Update Food
+// @Tags		Food
+// @Accept		json
+// @Produce		json
+// @Param		Food	body		model.FoodCreateOrUpdateSwaggerModel	true	"Food attribute"
+// @Success		200		{object}	entity.Food
+// @Failure		400		{object}	model.GeneralResponse
+// @Failure		500		{object}	model.GeneralResponse
+// @Security	ApiKeyAuth
+// @Router		/food/{id} [put]
 func (c FoodController) Update(ctx *fiber.Ctx) error {
 	var request model.FoodCreateOrUpdateModel
 	if err := ctx.BodyParser(&request); err != nil {
@@ -133,6 +174,16 @@ func (c FoodController) Update(ctx *fiber.Ctx) error {
 	})
 }
 
+// @Description	Delete Food.
+// @Summary		Delete Food
+// @Tags		Food
+// @Accept		json
+// @Produce		json
+// @Success		200		{object}	model.GeneralResponse
+// @Failure		400		{object}	model.GeneralResponse
+// @Failure		500		{object}	model.GeneralResponse
+// @Security	ApiKeyAuth
+// @Router		/food/{id} [delete]
 func (foodController FoodController) Delete(c *fiber.Ctx) error {
 	id := c.Params("id")
 
